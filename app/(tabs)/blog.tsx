@@ -2,10 +2,10 @@ import { StyleSheet } from "react-native";
 
 import { ScreenHeader, ScreenWrapper } from "@/components/common";
 
-export default function HomeScreen() {
+export default function Blog() {
   return (
     <ScreenWrapper>
-      <ScreenHeader title="Home" hideBackBtn />
+      <ScreenHeader title="Blog" />
     </ScreenWrapper>
   );
 }

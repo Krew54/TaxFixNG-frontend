@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "tax-fix",
+    "name": "TaxFix NG",
     "slug": "tax-fix",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -38,11 +38,24 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e42b8c27-eda4-4401-8e72-56a72829263f"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e42b8c27-eda4-4401-8e72-56a72829263f"
     }
   }
 }
