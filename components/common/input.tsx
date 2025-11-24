@@ -179,12 +179,10 @@ const styles = StyleSheet.create({
     borderRadius: globalStyles.radius.sm,
     fontFamily: "Inter-Regular",
   },
-
   iconBtn: {
     borderRadius: 50,
-    padding: globalStyles.padding.xs,
+    paddingRight: globalStyles.padding.xs,
   },
-
   iconStyle: {
     width: 20,
     height: 20,

@@ -5,7 +5,7 @@ import { ScreenHeader, ScreenWrapper } from "@/components/common";
 export default function Account() {
   return (
     <ScreenWrapper>
-      <ScreenHeader title="Account" />
+      <ScreenHeader title="Account" hideBackBtn />
     </ScreenWrapper>
   );
 }

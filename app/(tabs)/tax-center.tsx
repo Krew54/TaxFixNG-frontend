@@ -10,7 +10,7 @@ export default function TexCenter() {
   const { colors } = useTheme();
   return (
     <ScreenWrapper>
-      <ScreenHeader title="Tax Center" />
+      <ScreenHeader title="Tax Center" hideBackBtn />
       <ScrollView>
         <View style={styles.mainWrapper}>
           <ThemedText style={{ marginBottom: globalStyles.margin.md + 2 }}>

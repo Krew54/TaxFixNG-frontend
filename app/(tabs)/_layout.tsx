@@ -51,9 +51,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="blog"
+        name="learn"
         options={{
-          title: "Blog",
+          title: "Learn",
           tabBarIcon: ({ color, focused }) => (
             <Image
               source={require("./../../assets/icons/bottom-tabs/blog.png")}
