@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   },
   defaultSemiBold: {
     fontSize: 16,
-    fontWeight: "600",
     fontFamily: "Inter-SemiBold",
   },
   title: {

@@ -69,6 +69,7 @@ export function Button({
         >
           <>
             <ThemedText
+              type="defaultSemiBold"
               style={{
                 color: loading ? "#635d5dff" : "#fff",
               }}
