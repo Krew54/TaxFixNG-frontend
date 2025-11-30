@@ -1,22 +1,42 @@
 import { Button, Input, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useLogin } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
 import { EMAIL_REGEX, globalStyles } from "@/utils";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 
+type InputTypes = {
+  email: string;
+  password: string;
+};
 export default function Index() {
   const [hidePassword, setHidePassword] = useState(true);
   const { colors, isDark } = useTheme();
-  const { control, formState, handleSubmit } = useForm({
+  const { control, formState, handleSubmit } = useForm<InputTypes>({
     mode: "onChange",
   });
 
-  const onSubmit = () => {
-    router.replace("/(tabs)");
+  const { isPending, mutate } = useLogin((res) => {
+    console.log(res);
+  });
+
+  // showToast({
+  //     label: "Hello",
+  //     message: "i am here",
+  //     type: "error",
+  //   });
+  const onSubmit: SubmitHandler<InputTypes> = (data) => {
+    mutate({
+      payload: {
+        username: data.email,
+        ...data,
+      },
+    });
+    // router.replace("/(tabs)");
   };
   return (
     <ScreenWrapper>
@@ -79,6 +99,7 @@ export default function Index() {
           onPress={handleSubmit(onSubmit)}
           active={formState.isValid}
           style={styles.btnStyle}
+          loading={isPending}
         />
         <ThemedView style={styles.flexRow}>
           <ThemedText>No account yet? </ThemedText>

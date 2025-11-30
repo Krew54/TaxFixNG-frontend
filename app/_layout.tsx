@@ -7,12 +7,16 @@ import { SplashScreen, Stack } from "expo-router";
 import "react-native-reanimated";
 
 import { useTheme } from "@/hooks/use-theme-color";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { StatusBar, View } from "react-native";
+import Toast from "react-native-toast-message";
+
 export default function RootLayout() {
   const { isDark, colors } = useTheme();
   const navigationTheme = isDark ? DarkTheme : DefaultTheme;
+  const queryClient = new QueryClient();
 
   const [loaded, error] = useFonts({
     "Inter-Black": require("../assets/fonts/Inter/Inter-Black.ttf"),
@@ -34,22 +38,25 @@ export default function RootLayout() {
   }
   return (
     <ThemeProvider value={navigationTheme}>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.background,
-        }}
-      >
-        <Stack
-          screenOptions={{
-            headerShown: false,
+      <QueryClientProvider client={queryClient}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: colors.background,
           }}
         >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-        <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
-      </View>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+          <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
+        </View>
+      </QueryClientProvider>
+      <Toast />
     </ThemeProvider>
   );
 }
