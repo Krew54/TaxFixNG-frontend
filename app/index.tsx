@@ -31,7 +31,7 @@ export default function Index() {
         </ThemedText>
         <Input
           control={control}
-          label="email"
+          inputName="email"
           rules={{
             required: "Email is required",
             pattern: {
@@ -44,7 +44,7 @@ export default function Index() {
         />
         <Input
           control={control}
-          label="password"
+          inputName="password"
           placeholder="Password"
           rules={{
             required: "Password is required",

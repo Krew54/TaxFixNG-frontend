@@ -5,19 +5,23 @@ import { HelloWave } from "@/components/hello-wave";
 import { ThemedText } from "@/components/themed-text";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
+import { router } from "expo-router";
 
 const QUICK_ACTION = [
   {
     label: "Forecast",
     icon: require("../../assets/icons/symbol.png"),
+    screen: "/forecast",
   },
   {
     label: "Log Expenses",
     icon: require("../../assets/icons/document.png"),
+    screen: "",
   },
   {
     label: "Learn Tax",
     icon: require("../../assets/icons/knowledge.png"),
+    screen: "",
   },
 ];
 const NEXT_STEPS = [
@@ -27,7 +31,7 @@ const NEXT_STEPS = [
   },
   {
     label: "Check Your Tax Forecast",
-    screen: "",
+    screen: "/forecast",
   },
   {
     label: "Add Your First Tax Expenses",
@@ -90,7 +94,7 @@ export default function HomeScreen() {
             />
           </View>
           <View style={styles.actionWrapper}>
-            {QUICK_ACTION.map((item, index) => (
+            {QUICK_ACTION.map((item: any, index) => (
               <Pressable
                 key={index}
                 style={({ pressed }) => [
@@ -102,6 +106,7 @@ export default function HomeScreen() {
                     opacity: 0.7,
                   },
                 ]}
+                onPress={() => router.push(item.screen)}
               >
                 <Image
                   source={item.icon}
@@ -134,7 +139,7 @@ export default function HomeScreen() {
                 },
               ]}
             >
-              {NEXT_STEPS.map((item, index) => (
+              {NEXT_STEPS.map((item: any, index) => (
                 <Pressable
                   style={({ pressed }) => [
                     styles.btnWrapper,
@@ -143,6 +148,7 @@ export default function HomeScreen() {
                     },
                   ]}
                   key={index}
+                  onPress={() => router.push(item.screen)}
                 >
                   <ThemedText style={{ flex: 1 }}>{item.label}</ThemedText>
                   <Image

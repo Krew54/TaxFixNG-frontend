@@ -15,7 +15,8 @@ import { ThemedText } from "../themed-text";
 type ScreenProps = {
   control: any;
   rules?: any;
-  label: string;
+  inputName: string;
+  label?: string;
   rightIcon?: any;
   rightButton?: any;
   leftIcon?: any;
@@ -33,6 +34,7 @@ type ScreenProps = {
   autoCapitalize?: "none" | "characters" | "sentences" | "words";
   onBlur?: any;
   onFocus?: any;
+  showLabel?: boolean;
 };
 
 export const Input = ({
@@ -46,6 +48,7 @@ export const Input = ({
   placeholder,
   returnKeyType,
   label,
+  inputName,
   rules,
   control,
   sref,
@@ -55,18 +58,35 @@ export const Input = ({
   rightButtonPress,
   onBlur,
   onFocus,
+  showLabel,
   ...others
 }: ScreenProps) => {
   const [inputFocus, setInputFocus] = useState(false);
   const { colors } = useTheme();
   return (
     <Controller
+      name={inputName}
+      control={control}
+      rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
+          {showLabel && (
+            <ThemedText
+              style={{
+                marginTop: globalStyles.margin.sm,
+              }}
+            >
+              {label}
+            </ThemedText>
+          )}
           <View
             style={[
               styles.inputWrapper,
               {
+                marginTop: showLabel
+                  ? globalStyles.margin.xs
+                  : globalStyles.margin.sm,
+
                 backgroundColor: colors.inputBox,
                 borderColor: inputFocus
                   ? colors.primary
@@ -156,9 +176,6 @@ export const Input = ({
           )}
         </>
       )}
-      name={label}
-      control={control}
-      rules={rules}
     />
   );
 };
@@ -169,7 +186,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: globalStyles.radius.xs - 4,
     paddingRight: globalStyles.padding.sm,
-    marginTop: globalStyles.margin.sm,
     height: 56,
     paddingHorizontal: globalStyles.padding.sm,
     borderWidth: 1,

@@ -61,13 +61,13 @@ export default function Index() {
               message: "Email must be a valid email address",
             },
           }}
-          label="email"
+          inputName="email"
           placeholder="Enter Email Address"
           keyboardType="email-address"
         />
         <Input
           control={control}
-          label="password"
+          inputName="password"
           placeholder="New Password"
           secureTextEntry={hidePassword}
           rules={{
@@ -94,7 +94,7 @@ export default function Index() {
         )}
         <Input
           control={control}
-          label="password_confirmation"
+          inputName="password_confirmation"
           placeholder="Confirm New Password"
           secureTextEntry={hidePassword2}
           rules={{

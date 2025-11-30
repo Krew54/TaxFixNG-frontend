@@ -5,6 +5,7 @@ import { HelloWave } from "@/components/hello-wave";
 import { ThemedText } from "@/components/themed-text";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
+import { router } from "expo-router";
 
 export default function TexCenter() {
   const { colors } = useTheme();
@@ -44,7 +45,7 @@ export default function TexCenter() {
             <Button
               label="PLAN NOW"
               active
-              onPress={() => {}}
+              onPress={() => router.push("/forecast")}
               style={styles.buttonStyle}
             />
           </View>

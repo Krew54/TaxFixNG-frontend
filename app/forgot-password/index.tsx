@@ -46,7 +46,7 @@ export default function Index() {
               message: "Email must be a valid email address",
             },
           }}
-          label="email"
+          inputName="email"
           placeholder="Enter Email Address"
           keyboardType="email-address"
         />
