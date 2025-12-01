@@ -3,18 +3,22 @@ import axios from "axios";
 // @ts-ignore
 import { Alert } from "react-native";
 
+// doc: http://51.20.117.202:8000/docs
 const service = axios.create({
   baseURL: "http://51.20.117.202:8000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Add a request interceptor
 service.interceptors.request.use(
   async function (config) {
-    // let data: any = await getKey("token");
-
+    // Detect FormData and change headers
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    } else if (config.url?.includes("/login")) {
+      config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    } else {
+      config.headers["Content-Type"] = "application/json";
+    }
     // if (data) {
     //   config.headers["Authorization"] = `Bearer ${data}`;
     // }

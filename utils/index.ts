@@ -13,14 +13,6 @@ export const showToast = ({
     type: type,
     text1: label,
     text2: message,
-    text1Style: {
-      fontFamily: "Inter-Bold",
-      fontSize: 16,
-    },
-    text2Style: {
-      fontFamily: "Inter-Regular",
-      fontSize: 16,
-    },
     visibilityTime: 5000,
     topOffset: 60,
   });

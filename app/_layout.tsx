@@ -11,7 +11,40 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { StatusBar, View } from "react-native";
-import Toast from "react-native-toast-message";
+
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+
+const toastConfig = {
+  success: (props: any) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: "green" }}
+      text1Style={{
+        fontSize: 16,
+        fontFamily: "Inter-Bold",
+      }}
+      text2Style={{
+        fontSize: 14,
+        fontFamily: "Inter-Regular",
+      }}
+      text2NumberOfLines={10} // 👈 long messages supported
+    />
+  ),
+  error: (props: any) => (
+    <ErrorToast
+      {...props}
+      text1Style={{
+        fontSize: 16,
+        fontFamily: "Inter-Bold",
+      }}
+      text2Style={{
+        fontSize: 14,
+        fontFamily: "Inter-Regular",
+      }}
+      text2NumberOfLines={10}
+    />
+  ),
+};
 
 export default function RootLayout() {
   const { isDark, colors } = useTheme();
@@ -56,7 +89,7 @@ export default function RootLayout() {
           <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
         </View>
       </QueryClientProvider>
-      <Toast />
+      <Toast config={toastConfig} visibilityTime={6000} />
     </ThemeProvider>
   );
 }

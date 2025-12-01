@@ -25,6 +25,7 @@ export default function Index() {
     mode: "onChange",
   });
   const password = watch("password");
+  const email = watch("email");
 
   useEffect(() => {
     if (password) {
@@ -71,7 +72,8 @@ export default function Index() {
         message: res.data.message,
         type: "success",
       });
-      router.push("/");
+
+      router.push(`/otp/${email}`);
     }
   });
 

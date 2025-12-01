@@ -1,7 +1,8 @@
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { DigitInput } from "@/components/digit-input";
 import { ThemedText } from "@/components/themed-text";
-import { globalStyles } from "@/utils";
+import { useVerifyEmail } from "@/hooks/auth";
+import { globalStyles, showToast } from "@/utils";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -16,7 +17,8 @@ import {
 let pin: any;
 
 export default function Index() {
-  const { email } = useLocalSearchParams();
+  const { email, query } = useLocalSearchParams();
+  console.log(email, query);
 
   const ref1 = useRef<TextInput>(null);
   const ref2 = useRef<TextInput>(null);
@@ -67,8 +69,34 @@ export default function Index() {
   }, []);
   const resendOtp = () => {};
 
+  const { isPending, mutate } = useVerifyEmail((res) => {
+    if (res.status >= 400) {
+      showToast({
+        label: "Error",
+        message: res.data.message,
+        type: "error",
+      });
+    } else {
+      showToast({
+        label: "Sucess",
+        message: res.data.message,
+        type: "success",
+      });
+      if (query === "new-password") {
+        router.push("/new-password");
+      } else {
+        router.push("/");
+      }
+    }
+  });
   const handleSubmit = async () => {
-    router.push("/new-password");
+    mutate({
+      payload: {
+        email: email,
+        code: pin,
+      },
+    });
+    // router.push("/new-password");
   };
   return (
     <ScreenWrapper>
@@ -163,6 +191,7 @@ export default function Index() {
             label="Continue"
             onPress={handleSubmit}
             active={buttonActive}
+            loading={isPending}
           />
         </View>
       </View>
