@@ -1,15 +1,15 @@
 import { post } from "@/services";
-import { LoginPayload } from "@/types";
+import { SignupPayload } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
 type MutationProp = {
-  payload: LoginPayload;
+  payload: SignupPayload;
 };
 
-export const useLogin = (onSuccess?: (e: any) => void) => {
+export const useSignup = (onSuccess?: (e: any) => void) => {
   const { mutate, isPending } = useMutation({
     mutationFn: ({ payload }: MutationProp) => {
-      return post("/auth/user/login", payload);
+      return post("/auth/user/signup", payload);
     },
 
     onSuccess: async (response: any) => {

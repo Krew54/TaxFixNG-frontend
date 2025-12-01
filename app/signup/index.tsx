@@ -1,12 +1,19 @@
 import { Button, Input, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useSignup } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
-import { EMAIL_REGEX, globalStyles } from "@/utils";
-import { Link } from "expo-router";
+import { EMAIL_REGEX, globalStyles, showToast } from "@/utils";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
+
+type InputTypes = {
+  email: string;
+  password: string;
+  password_confirmation: string;
+};
 
 export default function Index() {
   const [hidePassword, setHidePassword] = useState(true);
@@ -14,7 +21,7 @@ export default function Index() {
   const [hidePassword2, setHidePassword2] = useState(true);
   const [passwordStrengthPass, setPasswordStrengthPass] = useState(false);
   const { colors } = useTheme();
-  const { control, watch, handleSubmit, formState } = useForm({
+  const { control, watch, handleSubmit, formState } = useForm<InputTypes>({
     mode: "onChange",
   });
   const password = watch("password");
@@ -39,7 +46,43 @@ export default function Index() {
     }
   }, [password]);
 
-  const onSubmit = () => {};
+  const { isPending, mutate } = useSignup((res) => {
+    if (res.status >= 400) {
+      let message = "";
+
+      if (Array.isArray(res.data.detail)) {
+        const msgs = res.data.detail.map((err: any) => err.msg);
+
+        // Remove duplicates
+        const uniqueMsgs = [...new Set(msgs)];
+
+        message = uniqueMsgs.join(", ");
+      } else {
+        message = res.data.detail;
+      }
+      showToast({
+        label: "Error",
+        message,
+        type: "error",
+      });
+    } else {
+      showToast({
+        label: "Sucess",
+        message: res.data.message,
+        type: "success",
+      });
+      router.push("/");
+    }
+  });
+
+  const onSubmit: SubmitHandler<InputTypes> = (data) => {
+    mutate({
+      payload: {
+        email: data.email,
+        password: data.password,
+      },
+    });
+  };
 
   return (
     <ScreenWrapper>
@@ -68,7 +111,7 @@ export default function Index() {
         <Input
           control={control}
           inputName="password"
-          placeholder="New Password"
+          placeholder="Passsword"
           secureTextEntry={hidePassword}
           rules={{
             required: "Password is required",
@@ -95,7 +138,7 @@ export default function Index() {
         <Input
           control={control}
           inputName="password_confirmation"
-          placeholder="Confirm New Password"
+          placeholder="Confirm Password"
           secureTextEntry={hidePassword2}
           rules={{
             required: "Password is required",
@@ -114,6 +157,7 @@ export default function Index() {
           onPress={handleSubmit(onSubmit)}
           active={formState.isValid}
           style={styles.btnStyle}
+          loading={isPending}
         />
         <ThemedView style={styles.flexRow}>
           <ThemedText>Already have an account? </ThemedText>

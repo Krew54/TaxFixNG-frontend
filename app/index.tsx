@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useLogin } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
-import { EMAIL_REGEX, globalStyles } from "@/utils";
+import { EMAIL_REGEX, globalStyles, showToast } from "@/utils";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -21,19 +21,35 @@ export default function Index() {
   });
 
   const { isPending, mutate } = useLogin((res) => {
-    console.log(res);
+    if (res.status >= 400) {
+      let message = "";
+
+      if (Array.isArray(res.data.detail)) {
+        const msgs = res.data.detail.map((err: any) => err.msg);
+
+        // Remove duplicates
+        const uniqueMsgs = [...new Set(msgs)];
+
+        message = uniqueMsgs.join(", ");
+      } else {
+        message = res.data.detail;
+      }
+
+      showToast({
+        label: "Error",
+        message,
+        type: "error",
+      });
+    } else {
+      console.log(res.data);
+    }
   });
 
-  // showToast({
-  //     label: "Hello",
-  //     message: "i am here",
-  //     type: "error",
-  //   });
   const onSubmit: SubmitHandler<InputTypes> = (data) => {
     mutate({
       payload: {
         username: data.email,
-        ...data,
+        password: data.password,
       },
     });
     // router.replace("/(tabs)");
