@@ -23,13 +23,12 @@ export default function Index() {
   const [hidePassword, setHidePassword] = useState(true);
   const [hidePassword2, setHidePassword2] = useState(true);
   const [passwordStrengthPass, setPasswordStrengthPass] = useState(false);
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const { control, watch, handleSubmit, formState } = useForm<InputTypes>({
     mode: "onChange",
   });
   const password = watch("new_password");
   const { email } = useLocalSearchParams();
-  // console.log(email);
 
   useEffect(() => {
     if (password) {

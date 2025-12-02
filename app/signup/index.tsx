@@ -80,7 +80,7 @@ export default function Index() {
   const onSubmit: SubmitHandler<InputTypes> = (data) => {
     mutate({
       payload: {
-        email: data.email,
+        email: data.email?.toLowerCase(),
         password: data.password,
       },
     });

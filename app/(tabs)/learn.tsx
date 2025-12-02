@@ -24,8 +24,8 @@ export default function Blog() {
           Stay informed and take care of your tax journey.
         </ThemedText>
         <Input
+          inputName="search"
           control={control}
-          label="search"
           placeholder="Search..."
           leftIcon={require("../../assets/icons/search.png")}
         />
