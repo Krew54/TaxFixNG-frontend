@@ -10,7 +10,6 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -18,7 +17,6 @@ let pin: any;
 
 export default function Index() {
   const { email, query } = useLocalSearchParams();
-  console.log(email, query);
 
   const ref1 = useRef<TextInput>(null);
   const ref2 = useRef<TextInput>(null);
@@ -174,7 +172,7 @@ export default function Index() {
             />
           </View>
 
-          <View style={styles.resendWrapper}>
+          {/* <View style={styles.resendWrapper}>
             <ThemedText>I don't receive a code! </ThemedText>
 
             {timerCount < 1 ? (
@@ -184,7 +182,7 @@ export default function Index() {
             ) : (
               <ThemedText>{timerCount}</ThemedText>
             )}
-          </View>
+          </View> */}
         </ScrollView>
         <View style={styles.buttonWrapper}>
           <Button

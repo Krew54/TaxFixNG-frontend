@@ -36,7 +36,7 @@ export default function Index() {
         message: res.data.message,
         type: "success",
       });
-      router.push(`/otp/${email}?query=new-password`);
+      router.push(`/new-password?email=${email}`);
     }
   });
 

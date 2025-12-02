@@ -1,6 +1,7 @@
 import { Button, Input, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { storeData } from "@/helpers";
 import { useLogin } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
 import { EMAIL_REGEX, globalStyles, showToast } from "@/utils";
@@ -43,7 +44,8 @@ export default function Index() {
         type: "error",
       });
     } else {
-      console.log(res.data);
+      storeData("token", res.data.access_token);
+      router.replace("/(tabs)");
     }
   });
 

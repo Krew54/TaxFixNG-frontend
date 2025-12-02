@@ -7,7 +7,7 @@ import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 // Set this however you want (Context, Zustand, global config, env, etc.)
-const FORCE_LIGHT_MODE = false; // <--- your boolean override
+const FORCE_LIGHT_MODE = true; // <--- your boolean override
 
 export function useThemeColor(
   props: { light?: string; dark?: string },

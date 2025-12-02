@@ -6,22 +6,30 @@ import {
 } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useResetPassword } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
-import { Link } from "expo-router";
+import { globalStyles, showToast } from "@/utils";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 
+type InputTypes = {
+  otp: string;
+  new_password: string;
+  confirm_new_password: string;
+};
 export default function Index() {
   const [hidePassword, setHidePassword] = useState(true);
   const [hidePassword2, setHidePassword2] = useState(true);
   const [passwordStrengthPass, setPasswordStrengthPass] = useState(false);
   const { colors, isDark } = useTheme();
-  const { control, watch, handleSubmit, formState } = useForm({
+  const { control, watch, handleSubmit, formState } = useForm<InputTypes>({
     mode: "onChange",
   });
-  const password = watch("password");
+  const password = watch("new_password");
+  const { email } = useLocalSearchParams();
+  // console.log(email);
 
   useEffect(() => {
     if (password) {
@@ -43,7 +51,32 @@ export default function Index() {
     }
   }, [password]);
 
-  const onSubmit = () => {};
+  const { isPending, mutate } = useResetPassword((res) => {
+    if (res.status >= 400) {
+      showToast({
+        label: "Error",
+        message: res.data.detail,
+        type: "error",
+      });
+    } else {
+      showToast({
+        label: "Sucess",
+        message: res.data.message,
+        type: "success",
+      });
+      router.push("/");
+    }
+  });
+  const onSubmit: SubmitHandler<InputTypes> = (data) => {
+    mutate({
+      payload: {
+        email,
+        new_password: data.new_password,
+        otp: data.otp,
+      },
+    });
+  };
+
   return (
     <ScreenWrapper>
       <ScreenHeader title="Reset Password" />
@@ -57,7 +90,17 @@ export default function Index() {
         </ThemedText>
         <Input
           control={control}
-          inputName="password"
+          inputName="otp"
+          placeholder="Six digit code"
+          rules={{
+            required: "Code is required",
+          }}
+          keyboardType="numeric"
+          maxLength={6}
+        />
+        <Input
+          control={control}
+          inputName="new_password"
           placeholder="New Password"
           secureTextEntry={hidePassword}
           rules={{
@@ -84,7 +127,7 @@ export default function Index() {
         )}
         <Input
           control={control}
-          inputName="password_confirmation"
+          inputName="confirm_new_password"
           placeholder="Confirm New Password"
           secureTextEntry={hidePassword2}
           rules={{
@@ -105,6 +148,7 @@ export default function Index() {
           onPress={handleSubmit(onSubmit)}
           active={formState.isValid}
           style={styles.btnStyle}
+          loading={isPending}
         />
         <ThemedView style={styles.flexRow}>
           <ThemedText>Remember now? </ThemedText>
