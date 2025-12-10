@@ -1,5 +1,7 @@
+import { getData } from "@/helpers";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
+import { router } from "expo-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
@@ -11,6 +13,13 @@ export const Tab1 = () => {
   const [switchOn, setSwitchOn] = useState(false);
   const { colors } = useTheme();
   const { control } = useForm();
+
+  const handleContinue = async () => {
+    const data = await getData("isLoggedIn");
+    if (!data) {
+      router.push("/signup");
+    }
+  };
   return (
     <View>
       <ThemedText
@@ -79,7 +88,7 @@ export const Tab1 = () => {
           }}
         />
       </View>
-      <Button label="Continue" onPress={() => {}} active />
+      <Button label="Continue" onPress={handleContinue} active />
     </View>
   );
 };

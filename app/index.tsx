@@ -1,11 +1,8 @@
-import { Button, Input, ScreenWrapper } from "@/components/common";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
 import { storeData } from "@/helpers";
 import { useLogin } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
-import { EMAIL_REGEX, globalStyles, showToast } from "@/utils";
-import { Link, router } from "expo-router";
+import { globalStyles, showToast } from "@/utils";
+import { Redirect, router } from "expo-router";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
@@ -58,86 +55,7 @@ export default function Index() {
     });
     // router.replace("/(tabs)");
   };
-  return (
-    <ScreenWrapper>
-      <ThemedView style={styles.mainWrapper}>
-        <ThemedText
-          type="title"
-          style={{
-            marginBottom: globalStyles.margin.sm + 1,
-          }}
-        >
-          Log in
-        </ThemedText>
-        <Input
-          control={control}
-          inputName="email"
-          autoCapitalize="none"
-          rules={{
-            required: "Email is required",
-            pattern: {
-              value: EMAIL_REGEX,
-              message: "Email must be a valid email address",
-            },
-          }}
-          placeholder="Enter Email Address"
-          keyboardType="email-address"
-        />
-        <Input
-          control={control}
-          inputName="password"
-          placeholder="Password"
-          rules={{
-            required: "Password is required",
-          }}
-          secureTextEntry={hidePassword}
-          rightIcon={
-            hidePassword
-              ? require("../assets/icons/eye.png")
-              : require("../assets/icons/eye-slash.png")
-          }
-          iconPress={() => setHidePassword(!hidePassword)}
-        />
-        <Link
-          href={"/forgot-password"}
-          style={{
-            alignSelf: "flex-end",
-            marginTop: globalStyles.margin.xs + 4,
-            textDecorationLine: "underline",
-          }}
-          suppressHighlighting={false}
-        >
-          <ThemedText
-            style={{
-              color: colors.primary,
-            }}
-          >
-            Forgot Password?
-          </ThemedText>
-        </Link>
-        <Button
-          label="Login"
-          onPress={handleSubmit(onSubmit)}
-          active={formState.isValid}
-          style={styles.btnStyle}
-          loading={isPending}
-        />
-        <ThemedView style={styles.flexRow}>
-          <ThemedText>No account yet? </ThemedText>
-          <Link href={"/signup"} suppressHighlighting={false}>
-            <ThemedText
-              type="defaultSemiBold"
-              style={{
-                color: colors.primary,
-              }}
-            >
-              Sign up
-            </ThemedText>
-          </Link>
-        </ThemedView>
-      </ThemedView>
-    </ScreenWrapper>
-  );
+  return <Redirect href={"/(tabs)"} />;
 }
 
 const styles = StyleSheet.create({

@@ -1,7 +1,8 @@
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { DigitInput } from "@/components/digit-input";
 import { ThemedText } from "@/components/themed-text";
-import { useVerifyEmail } from "@/hooks/auth";
+import { storeData } from "@/helpers";
+import { useLogin, useVerifyEmail } from "@/hooks/auth";
 import { globalStyles, showToast } from "@/utils";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -16,7 +17,7 @@ import {
 let pin: any;
 
 export default function Index() {
-  const { email, query } = useLocalSearchParams();
+  const { email, query, password } = useLocalSearchParams();
 
   const ref1 = useRef<TextInput>(null);
   const ref2 = useRef<TextInput>(null);
@@ -65,7 +66,30 @@ export default function Index() {
 
     return () => clearTimeout(timeout);
   }, []);
-  const resendOtp = () => {};
+
+  const { isPending: isSubmitting, mutate: Login } = useLogin((res) => {
+    if (res.status >= 400) {
+      let message = "";
+      if (Array.isArray(res.data.detail)) {
+        const msgs = res.data.detail.map((err: any) => err.msg);
+
+        // Remove duplicates
+        const uniqueMsgs = [...new Set(msgs)];
+
+        message = uniqueMsgs.join(", ");
+      } else {
+        message = res.data.detail;
+      }
+      showToast({
+        label: "Error",
+        message,
+        type: "error",
+      });
+    } else {
+      storeData("token", res.data.access_token);
+      router.replace("/(tabs)");
+    }
+  });
 
   const { isPending, mutate } = useVerifyEmail((res) => {
     if (res.status >= 400) {
@@ -82,6 +106,14 @@ export default function Index() {
       });
       if (query === "new-password") {
         router.push("/new-password");
+      } else if (query === "login") {
+        const payload = {
+          username: email?.toString().toLowerCase(),
+          password: password,
+        };
+        Login({
+          payload,
+        });
       } else {
         router.push("/");
       }
@@ -189,7 +221,7 @@ export default function Index() {
             label="Continue"
             onPress={handleSubmit}
             active={buttonActive}
-            loading={isPending}
+            loading={isPending || isSubmitting}
           />
         </View>
       </View>

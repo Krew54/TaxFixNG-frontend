@@ -2,56 +2,29 @@ import { Button, Input, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { storeData } from "@/helpers";
-import { useSignup } from "@/hooks/auth";
+import { useLogin } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
 import { EMAIL_REGEX, globalStyles, showToast } from "@/utils";
 import { Link, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 
 type InputTypes = {
   email: string;
   password: string;
-  password_confirmation: string;
 };
-
 export default function Index() {
   const [hidePassword, setHidePassword] = useState(true);
-
-  const [hidePassword2, setHidePassword2] = useState(true);
-  const [passwordStrengthPass, setPasswordStrengthPass] = useState(false);
-  const { colors } = useTheme();
-  const { control, watch, handleSubmit, formState } = useForm<InputTypes>({
+  const { colors, isDark } = useTheme();
+  const { control, formState, handleSubmit, watch } = useForm<InputTypes>({
     mode: "onChange",
   });
-  const password = watch("password");
+
   const email = watch("email");
-
-  useEffect(() => {
-    if (password) {
-      var uppercaseRe = /[A-Z]/;
-      var lowercaseRe = /[a-z]/;
-      var specialCharRe = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-      var numberRe = /[0-9]/;
-
-      if (
-        uppercaseRe.test(password) &&
-        lowercaseRe.test(password) &&
-        specialCharRe.test(password) &&
-        numberRe.test(password)
-      ) {
-        setPasswordStrengthPass(true);
-      } else {
-        setPasswordStrengthPass(false);
-      }
-    }
-  }, [password]);
-
-  const { isPending, mutate } = useSignup((res) => {
+  const { isPending, mutate } = useLogin((res) => {
     if (res.status >= 400) {
       let message = "";
-
       if (Array.isArray(res.data.detail)) {
         const msgs = res.data.detail.map((err: any) => err.msg);
 
@@ -62,34 +35,29 @@ export default function Index() {
       } else {
         message = res.data.detail;
       }
+      if (message.includes("not verified")) {
+        router.push(`/otp/${email}`);
+      }
       showToast({
         label: "Error",
         message,
         type: "error",
       });
     } else {
-      showToast({
-        label: "Sucess",
-        message: res.data.message,
-        type: "success",
-      });
-
-      router.push(`/otp/${email}`);
+      storeData("token", res.data.access_token);
+      router.replace("/(tabs)");
     }
   });
 
   const onSubmit: SubmitHandler<InputTypes> = (data) => {
-    const payload = {
-      email: data.email?.toLowerCase(),
-      password: data.password,
-    };
-    storeData("loginCredentials", payload);
-    router.push(`/otp/${email}?password=${data.password}&query=login`);
-    // mutate({
-    //   payload: payload,
-    // });
+    mutate({
+      payload: {
+        username: data.email?.toLowerCase(),
+        password: data.password,
+      },
+    });
+    // router.replace("/(tabs)");
   };
-
   return (
     <ScreenWrapper>
       <ThemedView style={styles.mainWrapper}>
@@ -99,10 +67,12 @@ export default function Index() {
             marginBottom: globalStyles.margin.sm + 1,
           }}
         >
-          Sign up
+          Log in
         </ThemedText>
         <Input
           control={control}
+          inputName="email"
+          autoCapitalize="none"
           rules={{
             required: "Email is required",
             pattern: {
@@ -110,18 +80,17 @@ export default function Index() {
               message: "Email must be a valid email address",
             },
           }}
-          inputName="email"
           placeholder="Enter Email Address"
           keyboardType="email-address"
         />
         <Input
           control={control}
           inputName="password"
-          placeholder="Passsword"
-          secureTextEntry={hidePassword}
+          placeholder="Password"
           rules={{
             required: "Password is required",
           }}
+          secureTextEntry={hidePassword}
           rightIcon={
             hidePassword
               ? require("../../assets/icons/eye.png")
@@ -129,52 +98,40 @@ export default function Index() {
           }
           iconPress={() => setHidePassword(!hidePassword)}
         />
-        {password && !passwordStrengthPass && (
+        <Link
+          href={"/forgot-password"}
+          style={{
+            alignSelf: "flex-end",
+            marginTop: globalStyles.margin.xs + 4,
+            textDecorationLine: "underline",
+          }}
+          suppressHighlighting={false}
+        >
           <ThemedText
             style={{
-              color: colors.secondary,
+              color: colors.primary,
             }}
           >
-            {password &&
-              password.length > 0 &&
-              !passwordStrengthPass &&
-              "Password must contain uppercase, special character and numbers"}
+            Forgot Password?
           </ThemedText>
-        )}
-        <Input
-          control={control}
-          inputName="password_confirmation"
-          placeholder="Confirm Password"
-          secureTextEntry={hidePassword2}
-          rules={{
-            required: "Password is required",
-            validate: (value: any) =>
-              value === password || "Password doesn't match",
-          }}
-          rightIcon={
-            hidePassword2
-              ? require("../../assets/icons/eye.png")
-              : require("../../assets/icons/eye-slash.png")
-          }
-          iconPress={() => setHidePassword2(!hidePassword2)}
-        />
+        </Link>
         <Button
-          label="Signup"
+          label="Login"
           onPress={handleSubmit(onSubmit)}
           active={formState.isValid}
           style={styles.btnStyle}
           loading={isPending}
         />
         <ThemedView style={styles.flexRow}>
-          <ThemedText>Already have an account? </ThemedText>
-          <Link href={"/login"} suppressHighlighting={false}>
+          <ThemedText>No account yet? </ThemedText>
+          <Link href={"/signup"} suppressHighlighting={false}>
             <ThemedText
               type="defaultSemiBold"
               style={{
                 color: colors.primary,
               }}
             >
-              Login
+              Sign up
             </ThemedText>
           </Link>
         </ThemedView>
