@@ -2,15 +2,21 @@ import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Input } from "../common";
 import { CustomSwitch } from "../switch";
 import { ThemedText } from "../themed-text";
 
+const rentSituation = ["Rented Apartment", "Self Owned"];
+
 export const Tab3 = () => {
   const [switchOn, setSwitchOn] = useState(false);
+  const [selectedRentSituation, setSelectedRentSituation] = useState<
+    string | null
+  >(null);
   const { colors } = useTheme();
   const { control } = useForm();
+
   return (
     <View>
       <ThemedText
@@ -21,6 +27,66 @@ export const Tab3 = () => {
       >
         Housing
       </ThemedText>
+      <ThemedText
+        style={{
+          marginTop: globalStyles.margin.sm,
+          color: colors.body,
+        }}
+      >
+        What is your housing situation?
+      </ThemedText>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flexDirection: "row", marginTop: 10, gap: 12 }}>
+          {rentSituation.map((type) => {
+            const isSelected = selectedRentSituation === type;
+
+            return (
+              <View
+                key={type}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  borderColor: isSelected ? colors.primary : colors.border,
+                  backgroundColor: isSelected
+                    ? colors.primary + "22"
+                    : "transparent",
+                }}
+                onTouchEnd={() => setSelectedRentSituation(type)}
+              >
+                <View
+                  style={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: 4,
+                    borderWidth: 2,
+                    borderColor: colors.primary,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: 6,
+                    backgroundColor: isSelected
+                      ? colors.primary
+                      : "transparent",
+                  }}
+                />
+
+                <ThemedText
+                  style={{
+                    color: colors.text,
+                    fontSize: 14,
+                  }}
+                >
+                  {type}
+                </ThemedText>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+
       <Input
         inputName="annual_rent"
         control={control}

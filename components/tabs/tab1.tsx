@@ -4,7 +4,7 @@ import { globalStyles } from "@/utils";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Input } from "../common";
 import { CustomSwitch } from "../switch";
 import { ThemedText } from "../themed-text";
@@ -13,6 +13,13 @@ export const Tab1 = () => {
   const [switchOn, setSwitchOn] = useState(false);
   const { colors } = useTheme();
   const { control } = useForm();
+
+  const incomeTypes = ["Salaried", "Self employed", "Unemployed"];
+  const employmentIncomeTypes = ["Monthly", "Annual"];
+  const [selectedIncome, setSelectedIncome] = useState<string | null>(null);
+  const [selectedEmploymentIncome, setSelectedEmploymentIncome] = useState<
+    string | null
+  >(null);
 
   const handleContinue = async () => {
     const data = await getData("isLoggedIn");
@@ -30,48 +37,137 @@ export const Tab1 = () => {
       >
         Income Details
       </ThemedText>
-      <Input
-        inputName="annual_income"
-        control={control}
-        label="Gross Annual Income (N)"
-        placeholder="e.g 2,500,780"
-        showLabel
-        keyboardType="numeric"
-      />
-      <Input
-        inputName="pension"
-        control={control}
-        label="Pension Contribution (%)"
-        placeholder="e.g 10.5"
-        showLabel
-        keyboardType="numeric"
-      />
+
       <ThemedText
         style={{
-          fontSize: 12,
-          color: colors.primary,
-          marginTop: globalStyles.margin.xs - 4,
+          marginTop: globalStyles.margin.sm,
+          color: colors.body,
         }}
       >
-        Estimated: N250,078
+        Employment Type
       </ThemedText>
-      <Input
-        inputName="annual_income"
-        control={control}
-        label="NHF Contribution (%)"
-        placeholder="e.g 2,500,780"
-        showLabel
-        keyboardType="numeric"
-      />
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flexDirection: "row", marginTop: 10, gap: 12 }}>
+          {incomeTypes.map((type) => {
+            const isSelected = selectedIncome === type;
+
+            return (
+              <View
+                key={type}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  borderColor: isSelected ? colors.primary : colors.border,
+                  backgroundColor: isSelected
+                    ? colors.primary + "22"
+                    : "transparent",
+                }}
+                onTouchEnd={() => setSelectedIncome(type)}
+              >
+                <View
+                  style={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: 4,
+                    borderWidth: 2,
+                    borderColor: colors.primary,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: 6,
+                    backgroundColor: isSelected
+                      ? colors.primary
+                      : "transparent",
+                  }}
+                />
+
+                <ThemedText
+                  style={{
+                    color: colors.text,
+                    fontSize: 14,
+                  }}
+                >
+                  {type}
+                </ThemedText>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+
       <ThemedText
         style={{
-          fontSize: 12,
-          color: colors.primary,
-          marginTop: globalStyles.margin.xs - 4,
+          marginTop: globalStyles.margin.sm,
+          color: colors.body,
         }}
       >
-        Estimated: N250,078
+        Employment Income
       </ThemedText>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flexDirection: "row", marginTop: 10, gap: 12 }}>
+          {employmentIncomeTypes.map((type) => {
+            const isSelected = selectedEmploymentIncome === type;
+
+            return (
+              <View
+                key={type}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingVertical: 6,
+                  paddingHorizontal: 10,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  borderColor: isSelected ? colors.primary : colors.border,
+                  backgroundColor: isSelected
+                    ? colors.primary + "22"
+                    : "transparent",
+                }}
+                onTouchEnd={() => setSelectedEmploymentIncome(type)}
+              >
+                <View
+                  style={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: 4,
+                    borderWidth: 2,
+                    borderColor: colors.primary,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: 6,
+                    backgroundColor: isSelected
+                      ? colors.primary
+                      : "transparent",
+                  }}
+                />
+
+                <ThemedText
+                  style={{
+                    color: colors.text,
+                    fontSize: 14,
+                  }}
+                >
+                  {type}
+                </ThemedText>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+
+      {selectedEmploymentIncome && (
+        <Input
+          inputName="annual_income"
+          control={control}
+          label={`Gross ${selectedEmploymentIncome} Income (N)`}
+          placeholder="e.g 2,500,780"
+          showLabel
+          keyboardType="numeric"
+        />
+      )}
 
       <View style={styles.switchWrapper}>
         <ThemedText
@@ -79,7 +175,30 @@ export const Tab1 = () => {
             flex: 1,
           }}
         >
-          Do you have other taxable income?{" "}
+          Do you have other income?{" "}
+        </ThemedText>
+        <CustomSwitch
+          value={switchOn}
+          onValueChange={() => {
+            setSwitchOn(!switchOn);
+          }}
+        />
+      </View>
+      <View
+        style={[
+          styles.switchWrapper,
+          {
+            marginTop: 0,
+          },
+        ]}
+      >
+        <ThemedText
+          style={{
+            flex: 1,
+          }}
+        >
+          Did you make profits from selling your assest like land, shares,
+          properties ?
         </ThemedText>
         <CustomSwitch
           value={switchOn}
