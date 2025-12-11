@@ -1,50 +1,111 @@
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
+import { Skeleton } from "@/components/ui/skeleton";
+import { deleteData, getData } from "@/helpers";
+import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 
-const TAX_PROFILE = [
-  {
-    label: "State",
-    value: "Lagos",
-  },
-  {
-    label: "Income",
-    value: "₦750,000/year",
-  },
-  {
-    label: "Dependants",
-    value: "Not set",
-  },
-  {
-    label: "Rent",
-    value: "₦350,000/year",
-  },
-];
-const ACCOUNT_SETTINGS = [
-  {
-    label: "Saved Expenses",
-    caption: "Manage the expenses saved",
-    screen: "",
-    icon: require("../../assets/icons/bag.png"),
-  },
-  {
-    label: "Reset Password",
-    caption: "Change your password",
-    screen: "",
-    icon: require("../../assets/icons/settings.png"),
-  },
-  {
-    label: "Log out",
-    caption: "Sign out of the App.",
-    screen: "",
-    icon: require("../../assets/icons/logout.png"),
-  },
-];
 export default function Account() {
   const { colors, isDark } = useTheme();
+  const [settings, setSettings] = useState<any>([]);
+
+  const [profile, setProfile] = useState(null);
+  const [isProfile, setIsProfile] = useState(false);
+  const { data, isLoading } = useGetProfile();
+
+  useEffect(() => {
+    if (!data) return;
+    if (data.status >= 400) {
+      setIsProfile(false);
+    } else {
+      setIsProfile(true);
+    }
+  }, [data]);
+
+  const TAX_PROFILE = [
+    {
+      label: "State",
+      value: isProfile ? data.data?.state : "-",
+    },
+    {
+      label: "Income",
+      value: isProfile ? `₦${data.data?.income}` : "-",
+    },
+    {
+      label: "Dependants",
+      value: isProfile ? data.data?.dependants : "-",
+    },
+    {
+      label: "Rent",
+      value: isProfile ? `₦${data.data?.rent}` : "-",
+    },
+  ];
+
+  useEffect(() => {
+    const load = async () => {
+      const token = await getData("token");
+
+      setSettings([
+        {
+          label: "Saved Expenses",
+          caption: "Manage the expenses saved",
+          screen: "",
+          icon: require("../../assets/icons/bag.png"),
+        },
+        {
+          label: "Reset Password",
+          caption: "Change your password",
+          screen: "",
+          icon: require("../../assets/icons/settings.png"),
+        },
+        ...(token
+          ? [
+              {
+                label: "Log out",
+                caption: "Sign out of the App.",
+                icon: require("../../assets/icons/logout.png"),
+              },
+            ]
+          : []),
+      ]);
+    };
+
+    load();
+  }, []);
+
+  const handlePress = (label: string) => {
+    if (label === "Log out") {
+      Alert.alert(
+        "Confirm Logout",
+        "Are you sure you want to sign out?",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Log out",
+            style: "destructive",
+            onPress: async () => {
+              await deleteData("token");
+              router.replace("/login");
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   return (
     <ScreenWrapper>
       <ScreenHeader title="Account" hideBackBtn />
@@ -71,23 +132,36 @@ export default function Account() {
                 >
                   {item.label}
                 </ThemedText>
-                <ThemedText
-                  type="defaultSemiBold"
-                  style={{
-                    color: colors.primary,
-                  }}
-                >
-                  {item.value}
-                </ThemedText>
+                {isLoading ? (
+                  <Skeleton
+                    width={"30%"}
+                    style={{
+                      marginTop: 4,
+                    }}
+                  />
+                ) : (
+                  <ThemedText
+                    type="defaultSemiBold"
+                    style={{
+                      color: colors.primary,
+                    }}
+                  >
+                    {item.value}
+                  </ThemedText>
+                )}
               </View>
             ))}
           </View>
-          <Button
-            label="Edit Tax Profile"
-            onPress={() => {}}
-            style={styles.taxProfileBtn}
-            active
-          />
+          {isLoading ? (
+            <Skeleton style={styles.skeletonWrapper} />
+          ) : (
+            <Button
+              label={isProfile ? "Edit Tax Profile" : "Create Tax Profile"}
+              onPress={() => router.push("/tax-profile")}
+              style={styles.taxProfileBtn}
+              active
+            />
+          )}
 
           <ThemedText
             type="subtitle"
@@ -97,7 +171,7 @@ export default function Account() {
           >
             Account Settings
           </ThemedText>
-          {ACCOUNT_SETTINGS.map((item, index) => (
+          {settings.map((item: any, index: number) => (
             <Pressable
               key={index}
               style={({ pressed }) => [
@@ -106,6 +180,7 @@ export default function Account() {
                   opacity: 0.7,
                 },
               ]}
+              onPress={() => handlePress(item.label)}
             >
               <View
                 style={[
@@ -235,5 +310,12 @@ const styles = StyleSheet.create({
   },
   supportBtnWrapper: {
     marginTop: globalStyles.margin.xs,
+  },
+  skeletonWrapper: {
+    height: 36,
+    width: "70%",
+    alignSelf: "center",
+    marginBottom: globalStyles.margin.xl + 4,
+    marginTop: globalStyles.margin.xl,
   },
 });

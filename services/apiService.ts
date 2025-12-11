@@ -1,4 +1,5 @@
 import { defaultError } from "@/constants";
+import { getData } from "@/helpers";
 import axios from "axios";
 // @ts-ignore
 import { Alert } from "react-native";
@@ -11,6 +12,7 @@ const service = axios.create({
 // Add a request interceptor
 service.interceptors.request.use(
   async function (config) {
+    const token = await getData("token");
     // Detect FormData and change headers
     if (config.data instanceof FormData) {
       config.headers["Content-Type"] = "multipart/form-data";
@@ -19,9 +21,10 @@ service.interceptors.request.use(
     } else {
       config.headers["Content-Type"] = "application/json";
     }
-    // if (data) {
-    //   config.headers["Authorization"] = `Bearer ${data}`;
-    // }
+
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
 
     return config;
   },

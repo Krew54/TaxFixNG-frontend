@@ -1,11 +1,22 @@
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { HelloWave } from "@/components/hello-wave";
 import { ThemedText } from "@/components/themed-text";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getData } from "@/helpers";
+import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
 import { router } from "expo-router";
+import { useEffect, useState } from "react";
 
 const QUICK_ACTION = [
   {
@@ -43,7 +54,44 @@ const NEXT_STEPS = [
   },
 ];
 export default function HomeScreen() {
+  const [profile, setProfile] = useState(null);
+  const [isProfile, setIsProfile] = useState(false);
+  const { data, isLoading } = useGetProfile();
+
+  useEffect(() => {
+    if (!data) return;
+    if (data.status >= 400) {
+      setIsProfile(false);
+    } else {
+      setIsProfile(true);
+    }
+  }, [data]);
+
   const { colors, isDark } = useTheme();
+
+  const handleForecastPress = async () => {
+    const token = await getData("token");
+    if (!token) {
+      Alert.alert(
+        "Login Required",
+        "You need to log in to create or view forecast.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Log in",
+            style: "default",
+            onPress: () => {
+              router.push("/login");
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+      return;
+    }
+    router.push("/forecast");
+  };
+
   return (
     <ScreenWrapper>
       <ScreenHeader title="Home" hideBackBtn />
@@ -78,20 +126,38 @@ export default function HomeScreen() {
                 >
                   Estimated Tax
                 </ThemedText>
-                <ThemedText
-                  style={{ marginTop: 4, color: colors.primary }}
-                  type="subtitle"
-                >
-                  NGN59,300
-                </ThemedText>
+                {isLoading ? (
+                  <Skeleton
+                    style={{
+                      marginTop: 10,
+                    }}
+                  />
+                ) : (
+                  <ThemedText
+                    style={{ marginTop: 4, color: colors.primary }}
+                    type="subtitle"
+                  >
+                    ₦0
+                  </ThemedText>
+                )}
               </View>
             </View>
-            <Button
-              label="VIEW FORECAST"
-              active
-              onPress={() => {}}
-              style={styles.buttonStyle}
-            />
+            {isLoading ? (
+              <Skeleton
+                style={{
+                  marginTop: globalStyles.margin.md,
+                  height: 40,
+                  width: "60%",
+                }}
+              />
+            ) : (
+              <Button
+                label={isProfile ? "VIEW FORECAST" : "CREATE FORECAST"}
+                active
+                onPress={handleForecastPress}
+                style={styles.buttonStyle}
+              />
+            )}
           </View>
           <View style={styles.actionWrapper}>
             {QUICK_ACTION.map((item: any, index) => (
@@ -192,7 +258,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   buttonStyle: {
-    width: "50%",
+    width: "60%",
     height: 40,
     borderRadius: 12,
     marginTop: globalStyles.margin.md,

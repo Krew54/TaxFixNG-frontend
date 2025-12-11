@@ -1,6 +1,7 @@
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Button } from "../common";
 import { ThemedText } from "../themed-text";
 
 export const Tab4 = () => {
@@ -55,6 +56,27 @@ export const Tab4 = () => {
           </ThemedText>
           <ThemedText>N2,500,780</ThemedText>
         </View>
+      </View>
+
+      <View
+        style={[
+          styles.btnWrapper,
+          {
+            backgroundColor: isDark ? colors.inputBox : "#f4f6f7",
+          },
+        ]}
+      >
+        <Button label="Save" onPress={() => {}} active />
+        <Pressable
+          style={[
+            styles.btnStyle,
+            {
+              borderColor: colors.primary,
+            },
+          ]}
+        >
+          <ThemedText>Create New</ThemedText>
+        </Pressable>
       </View>
 
       <View
@@ -240,7 +262,6 @@ const styles = StyleSheet.create({
 
     // --- Shadow (Android) ---
     elevation: 4,
-
     marginBottom: globalStyles.margin.lg + 2,
   },
   cardRow: {
@@ -248,5 +269,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: globalStyles.padding.xs - 2,
+  },
+  btnWrapper: {
+    padding: globalStyles.padding.sm + 3,
+    borderRadius: 10,
+    // --- Shadow (iOS) ---
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+
+    // --- Shadow (Android) ---
+    elevation: 4,
+    marginBottom: globalStyles.margin.lg + 2,
+  },
+  btnStyle: {
+    alignItems: "center",
+    height: 56,
+    justifyContent: "center",
+    borderRadius: globalStyles.radius.xs - 4,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    marginTop: globalStyles.margin.sm,
   },
 });
