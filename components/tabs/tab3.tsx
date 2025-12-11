@@ -1,4 +1,5 @@
 import { useTheme } from "@/hooks/use-theme-color";
+import { TabProps } from "@/types";
 import { globalStyles } from "@/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,7 +11,7 @@ import { ThemedText } from "../themed-text";
 const rentSituation = ["Rented Apartment", "Self Owned"];
 const haveMortgage = ["Yes", "No"];
 
-export const Tab3 = () => {
+export const Tab3 = ({ goToNext }: TabProps) => {
   const [switchOn, setSwitchOn] = useState(false);
   const [selectedRentSituation, setSelectedRentSituation] = useState<
     string | null
@@ -155,7 +156,7 @@ export const Tab3 = () => {
       <Input
         inputName="annual_rent"
         control={control}
-        label="Annual Rent Amount (N)"
+        label="Annual Rent Amount (₦)"
         placeholder="e.g 2,500,780"
         showLabel
         keyboardType="numeric"
@@ -176,7 +177,7 @@ export const Tab3 = () => {
           }}
         />
       </View>
-      <Button label="Continue" onPress={() => {}} active />
+      <Button label="Continue" onPress={() => goToNext?.()} active />
     </View>
   );
 };

@@ -1,20 +1,12 @@
-import {
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { HelloWave } from "@/components/hello-wave";
 import { ThemedText } from "@/components/themed-text";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getData } from "@/helpers";
 import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { checkAuth, globalStyles } from "@/utils";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 
@@ -70,26 +62,19 @@ export default function HomeScreen() {
   const { colors, isDark } = useTheme();
 
   const handleForecastPress = async () => {
-    const token = await getData("token");
-    if (!token) {
-      Alert.alert(
-        "Login Required",
-        "You need to log in to create or view forecast.",
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Log in",
-            style: "default",
-            onPress: () => {
-              router.push("/login");
-            },
-          },
-        ],
-        { cancelable: true }
-      );
-      return;
-    }
+    const isLoggedIn = await checkAuth();
+    if (!isLoggedIn) return;
     router.push("/forecast");
+  };
+
+  const handleNavigation = async (screen: any) => {
+    if (screen === "/forecast") {
+      const isLoggedIn = await checkAuth();
+      if (!isLoggedIn) return;
+      router.push(screen);
+    } else {
+      router.push(screen);
+    }
   };
 
   return (
@@ -172,7 +157,7 @@ export default function HomeScreen() {
                     opacity: 0.7,
                   },
                 ]}
-                onPress={() => router.push(item.screen)}
+                onPress={() => handleNavigation(item.screen)}
               >
                 <Image
                   source={item.icon}
@@ -195,6 +180,7 @@ export default function HomeScreen() {
               </Pressable>
             ))}
           </View>
+
           <View>
             <ThemedText type="defaultSemiBold">Your Next Steps</ThemedText>
             <View
@@ -214,7 +200,7 @@ export default function HomeScreen() {
                     },
                   ]}
                   key={index}
-                  onPress={() => router.push(item.screen)}
+                  onPress={() => handleNavigation(item.screen)}
                 >
                   <ThemedText style={{ flex: 1 }}>{item.label}</ThemedText>
                   <Image

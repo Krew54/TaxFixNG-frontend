@@ -1,7 +1,6 @@
-import { getData } from "@/helpers";
 import { useTheme } from "@/hooks/use-theme-color";
+import { TabProps } from "@/types";
 import { globalStyles } from "@/utils";
-import { router } from "expo-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -9,23 +8,56 @@ import { Button, Input } from "../common";
 import { CustomSwitch } from "../switch";
 import { ThemedText } from "../themed-text";
 
-export const Tab1 = () => {
+export const Tab1 = ({ goToNext }: TabProps) => {
   const [switchOn, setSwitchOn] = useState(false);
   const { colors } = useTheme();
   const { control } = useForm();
 
-  const incomeTypes = ["Salaried", "Self employed", "Unemployed"];
-  const employmentIncomeTypes = ["Monthly", "Annual"];
-  const [selectedIncome, setSelectedIncome] = useState<string | null>(null);
-  const [selectedEmploymentIncome, setSelectedEmploymentIncome] = useState<
-    string | null
-  >(null);
+  const incomeTypes = [
+    {
+      name: "Salaried",
+      value: "alaried",
+    },
+    {
+      name: "Self Employed",
+      value: "self_employed",
+    },
+    {
+      name: "Unemployed",
+      value: "unemployed",
+    },
+  ];
+  const employmentIncomeTypes = [
+    {
+      name: "Monthly",
+      value: "Monthly",
+    },
+    {
+      name: "Annually",
+      value: "annually",
+    },
+  ];
+  const [selectedIncome, setSelectedIncome] = useState<{
+    name: string;
+    value: string;
+  }>({
+    name: "",
+    value: "",
+  });
+  const [selectedEmploymentIncome, setSelectedEmploymentIncome] = useState<{
+    name: string;
+    value: string;
+  }>({
+    name: "",
+    value: "",
+  });
 
   const handleContinue = async () => {
-    const data = await getData("isLoggedIn");
-    if (!data) {
-      router.push("/signup");
-    }
+    goToNext?.();
+    // const data = await getData("isLoggedIn");
+    // if (!data) {
+    //   router.push("/signup");
+    // }
   };
   return (
     <View>
@@ -48,12 +80,12 @@ export const Tab1 = () => {
       </ThemedText>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flexDirection: "row", marginTop: 10, gap: 12 }}>
-          {incomeTypes.map((type) => {
-            const isSelected = selectedIncome === type;
+          {incomeTypes.map((item, index) => {
+            const isSelected = selectedIncome.value === item.value;
 
             return (
               <View
-                key={type}
+                key={index}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -66,7 +98,9 @@ export const Tab1 = () => {
                     ? colors.primary + "22"
                     : "transparent",
                 }}
-                onTouchEnd={() => setSelectedIncome(type)}
+                onTouchEnd={() =>
+                  setSelectedIncome({ name: item.name, value: item.value })
+                }
               >
                 <View
                   style={{
@@ -90,7 +124,7 @@ export const Tab1 = () => {
                     fontSize: 14,
                   }}
                 >
-                  {type}
+                  {item.name}
                 </ThemedText>
               </View>
             );
@@ -108,12 +142,12 @@ export const Tab1 = () => {
       </ThemedText>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={{ flexDirection: "row", marginTop: 10, gap: 12 }}>
-          {employmentIncomeTypes.map((type) => {
-            const isSelected = selectedEmploymentIncome === type;
+          {employmentIncomeTypes.map((item, index) => {
+            const isSelected = selectedEmploymentIncome.value === item.value;
 
             return (
               <View
-                key={type}
+                key={index}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -126,7 +160,12 @@ export const Tab1 = () => {
                     ? colors.primary + "22"
                     : "transparent",
                 }}
-                onTouchEnd={() => setSelectedEmploymentIncome(type)}
+                onTouchEnd={() =>
+                  setSelectedEmploymentIncome({
+                    name: item.name,
+                    value: item.value,
+                  })
+                }
               >
                 <View
                   style={{
@@ -150,7 +189,7 @@ export const Tab1 = () => {
                     fontSize: 14,
                   }}
                 >
-                  {type}
+                  {item.name}
                 </ThemedText>
               </View>
             );
@@ -158,11 +197,11 @@ export const Tab1 = () => {
         </View>
       </ScrollView>
 
-      {selectedEmploymentIncome && (
+      {selectedEmploymentIncome.name && (
         <Input
           inputName="annual_income"
           control={control}
-          label={`Gross ${selectedEmploymentIncome} Income (N)`}
+          label={`Gross ${selectedEmploymentIncome.name} Income (₦)`}
           placeholder="e.g 2,500,780"
           showLabel
           keyboardType="numeric"

@@ -17,5 +17,6 @@ export const showToast = ({
     topOffset: 60,
   });
 };
+export * from "./checkAuth";
 export * from "./fonts";
 export * from "./globalStyles";

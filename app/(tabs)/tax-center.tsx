@@ -4,11 +4,19 @@ import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { HelloWave } from "@/components/hello-wave";
 import { ThemedText } from "@/components/themed-text";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { checkAuth, globalStyles } from "@/utils";
 import { router } from "expo-router";
 
 export default function TexCenter() {
   const { colors } = useTheme();
+
+  const handlePlanNow = async () => {
+    const isLoggedIn = await checkAuth();
+    if (!isLoggedIn) return;
+
+    router.push("/forecast");
+  };
+
   return (
     <ScreenWrapper>
       <ScreenHeader title="Tax Center" hideBackBtn />
@@ -45,7 +53,7 @@ export default function TexCenter() {
             <Button
               label="PLAN NOW"
               active
-              onPress={() => router.push("/forecast")}
+              onPress={handlePlanNow}
               style={styles.buttonStyle}
             />
           </View>

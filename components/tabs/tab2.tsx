@@ -1,4 +1,5 @@
 import { useTheme } from "@/hooks/use-theme-color";
+import { TabProps } from "@/types";
 import { globalStyles } from "@/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -7,7 +8,7 @@ import { Button, Input } from "../common";
 import { CustomSwitch } from "../switch";
 import { ThemedText } from "../themed-text";
 
-export const Tab2 = () => {
+export const Tab2 = ({ goToNext }: TabProps) => {
   const [switchOn, setSwitchOn] = useState(false);
   const { colors } = useTheme();
   const { control } = useForm();
@@ -22,9 +23,9 @@ export const Tab2 = () => {
         Deductions
       </ThemedText>
       <Input
-        inputName="life_assurance"
+        inputName="life_issurance"
         control={control}
-        label="Life Assurance Premium (N)"
+        label="Life Insurance Premium (₦)"
         placeholder="e.g 2,500,780"
         showLabel
         keyboardType="numeric"
@@ -32,7 +33,7 @@ export const Tab2 = () => {
       <Input
         inputName="contribution"
         control={control}
-        label="NHIS Contribution (N)"
+        label="NHIS Contribution (₦)"
         placeholder="e.g 10.5"
         showLabel
         keyboardType="numeric"
@@ -49,7 +50,7 @@ export const Tab2 = () => {
       <Input
         inputName="voluntary_pension"
         control={control}
-        label="Voluntary Pension Contribution (N)"
+        label="Voluntary Pension Contribution (₦)"
         placeholder="e.g 2,500,780"
         showLabel
         keyboardType="numeric"
@@ -79,7 +80,7 @@ export const Tab2 = () => {
           }}
         />
       </View>
-      <Button label="Continue" onPress={() => {}} active />
+      <Button label="Continue" onPress={() => goToNext?.()} active />
     </View>
   );
 };

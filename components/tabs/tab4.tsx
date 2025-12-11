@@ -33,7 +33,7 @@ export const Tab4 = () => {
           >
             Your withholdings:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -43,7 +43,7 @@ export const Tab4 = () => {
           >
             Your withholdings:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -54,7 +54,7 @@ export const Tab4 = () => {
           >
             Your estimated tax due:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
       </View>
 
@@ -75,7 +75,14 @@ export const Tab4 = () => {
             },
           ]}
         >
-          <ThemedText>Create New</ThemedText>
+          <ThemedText
+            type="defaultSemiBold"
+            style={{
+              color: colors.primary,
+            }}
+          >
+            Create New
+          </ThemedText>
         </Pressable>
       </View>
 
@@ -98,7 +105,7 @@ export const Tab4 = () => {
           >
             Gross Annual Income:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -108,7 +115,7 @@ export const Tab4 = () => {
           >
             Taxable income (before pension/NHF):
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -118,7 +125,7 @@ export const Tab4 = () => {
           >
             Pension contributions:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -128,7 +135,7 @@ export const Tab4 = () => {
           >
             NHS contributions:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -138,7 +145,7 @@ export const Tab4 = () => {
           >
             Other income:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -149,7 +156,7 @@ export const Tab4 = () => {
           >
             Subtotal:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
       </View>
 
@@ -172,7 +179,7 @@ export const Tab4 = () => {
           >
             Consolidated Relief Allowance (CRA):
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -182,7 +189,7 @@ export const Tab4 = () => {
           >
             Pension contributions:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -192,7 +199,7 @@ export const Tab4 = () => {
           >
             NHF contributions:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -202,7 +209,7 @@ export const Tab4 = () => {
           >
             NHIS contributions:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -212,7 +219,7 @@ export const Tab4 = () => {
           >
             Life Assurance premium:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -222,7 +229,7 @@ export const Tab4 = () => {
           >
             Housing Relief:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -232,7 +239,7 @@ export const Tab4 = () => {
           >
             Voluntary Pension Contribution:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
         <View style={styles.cardRow}>
           <ThemedText
@@ -243,7 +250,7 @@ export const Tab4 = () => {
           >
             Subtotal:
           </ThemedText>
-          <ThemedText>N2,500,780</ThemedText>
+          <ThemedText>₦2,500,780</ThemedText>
         </View>
       </View>
     </View>

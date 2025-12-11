@@ -5,40 +5,58 @@ import { Tab3 } from "@/components/tabs/tab3";
 import { Tab4 } from "@/components/tabs/tab4";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 const TABS = [
   {
     name: "Income",
     value: "income",
-    component: <Tab1 />,
+    component: Tab1,
   },
   {
     name: "Deductions",
     value: "deductions",
-    component: <Tab2 />,
+    component: Tab2,
   },
   {
     name: "Housing",
     value: "housing",
-    component: <Tab3 />,
+    component: Tab3,
   },
   {
     name: "Summary",
     value: "summary",
-    component: <Tab4 />,
+    component: Tab4,
   },
 ];
 export default function Index() {
-  const [selectedTab, setSelectedTab] = useState({
-    name: "income",
-    component: <Tab1 />,
-  });
+  const [activeTab, setActiveTab] = useState(0);
+  const TabComponent = TABS[activeTab].component;
+
+  const [isProfile, setIsProfile] = useState(false);
+  const { data, isLoading } = useGetProfile();
+
+  useEffect(() => {
+    if (!data) return;
+    if (data.status >= 400) {
+      setIsProfile(false);
+    } else {
+      setIsProfile(true);
+    }
+  }, [data]);
   const { colors, isDark } = useTheme();
 
+  const goToNext = () => {
+    setActiveTab((prev) => Math.min(prev + 1, TABS.length - 1));
+  };
+
+  const goToPrev = () => {
+    setActiveTab((prev) => Math.max(prev - 1, 0));
+  };
   return (
     <ScreenWrapper>
       <ScreenHeader title="Forecast" />
@@ -64,7 +82,7 @@ export default function Index() {
               color: colors.white,
             }}
           >
-            N240,000
+            {isProfile ? `₦${data?.data?.estimated_tax_due}` : "₦0"}
           </ThemedText>
           <ThemedText
             style={{
@@ -79,28 +97,26 @@ export default function Index() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.tabsWrapper}>
             {TABS.map((item, index) => {
-              const isSelected = item.value === selectedTab.name;
+              const isSelected = index === activeTab;
+
               return (
                 <Pressable
                   key={index}
+                  onPress={() => setActiveTab(index)}
                   style={[
                     styles.tabButton,
                     {
                       borderBottomWidth: isSelected ? 2 : 0,
-                      borderBottomColor: colors.primary,
+                      borderBottomColor: isSelected
+                        ? colors.primary
+                        : "transparent",
                     },
                   ]}
-                  onPress={() =>
-                    setSelectedTab({
-                      component: item.component,
-                      name: item.value,
-                    })
-                  }
                 >
                   <ThemedText
                     style={{
-                      fontFamily: isSelected ? "Inter-Bold" : "Inter-Medium",
                       color: isSelected ? colors.primary : colors.body,
+                      fontFamily: isSelected ? "Inter-Bold" : "Inter-Medium",
                     }}
                   >
                     {item.name}
@@ -113,7 +129,7 @@ export default function Index() {
       </View>
       <ScrollView>
         <ThemedView style={styles.mainWrapper}>
-          {selectedTab.component}
+          <TabComponent goToNext={goToNext} goToPrev={goToPrev} />
         </ThemedView>
       </ScrollView>
     </ScreenWrapper>

@@ -18,3 +18,7 @@ export type ResetPasswordPayload = {
 export type ForgetPasswordPayload = {
   email: string;
 };
+export type TabProps = {
+  goToNext?: () => any;
+  goToPrev?: () => any;
+};
