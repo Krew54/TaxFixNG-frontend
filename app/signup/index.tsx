@@ -73,8 +73,7 @@ export default function Index() {
         message: res.data.message,
         type: "success",
       });
-
-      router.push(`/otp/${email}`);
+      router.push(`/otp/${email}?password=${password}&query=login`);
     }
   });
 
@@ -84,10 +83,9 @@ export default function Index() {
       password: data.password,
     };
     storeData("loginCredentials", payload);
-    router.push(`/otp/${email}?password=${data.password}&query=login`);
-    // mutate({
-    //   payload: payload,
-    // });
+    mutate({
+      payload: payload,
+    });
   };
 
   return (
