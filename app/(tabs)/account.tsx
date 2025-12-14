@@ -21,7 +21,6 @@ export default function Account() {
   const { colors, isDark } = useTheme();
   const [settings, setSettings] = useState<any>([]);
 
-  const [profile, setProfile] = useState(null);
   const [isProfile, setIsProfile] = useState(false);
   const { data, isLoading } = useGetProfile();
 
@@ -59,6 +58,12 @@ export default function Account() {
 
       setSettings([
         {
+          label: "Tax Forecasts",
+          caption: "Manage the forecast saved.",
+          screen: "/saved-forecasts",
+          icon: require("../../assets/icons/bag.png"),
+        },
+        {
           label: "Saved Expenses",
           caption: "Manage the expenses saved",
           screen: "",
@@ -85,7 +90,7 @@ export default function Account() {
     load();
   }, []);
 
-  const handlePress = (label: string) => {
+  const handlePress = (label: string, screen: any) => {
     if (label === "Log out") {
       Alert.alert(
         "Confirm Logout",
@@ -103,6 +108,8 @@ export default function Account() {
         ],
         { cancelable: true }
       );
+    } else {
+      router.push(screen);
     }
   };
 
@@ -180,7 +187,7 @@ export default function Account() {
                   opacity: 0.7,
                 },
               ]}
-              onPress={() => handlePress(item.label)}
+              onPress={() => handlePress(item.label, item.screen)}
             >
               <View
                 style={[

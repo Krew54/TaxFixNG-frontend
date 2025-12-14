@@ -29,16 +29,14 @@ export default function Index() {
     mode: "onChange",
   });
   const { colors, isDark } = useTheme();
-  const [profile, setProfile] = useState({});
-  const [isProfile, setIsProfile] = useState(false);
 
-  const { data, isLoading } = useGetProfile();
+  const [isProfile, setIsProfile] = useState(false);
+  const { data } = useGetProfile();
   useEffect(() => {
     if (!data) return;
     if (data.status >= 400) {
       setIsProfile(false);
     } else {
-      setProfile(data);
       reset({
         first_name: data?.Name.split(" ")[0] || "",
         last_name: data?.Name.split(" ")[1] || "",
@@ -99,6 +97,7 @@ export default function Index() {
       }
     }
   );
+
   const onSubmit = async (data: any) => {
     const isLoggedIn = await checkAuth();
     if (!isLoggedIn) return;

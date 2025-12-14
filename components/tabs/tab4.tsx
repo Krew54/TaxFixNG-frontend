@@ -1,5 +1,10 @@
+import { queryClient } from "@/app/_layout";
 import { deleteData, getData } from "@/helpers";
-import { useCreateProfile } from "@/hooks/profile";
+import {
+  useCreateProfile,
+  useGetProfile,
+  useUpdateProfile,
+} from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { TabProps } from "@/types";
 import { checkAuth, globalStyles, showToast } from "@/utils";
@@ -14,6 +19,17 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
 
   const [forecastPayload, setForecastPayload] = useState<any>(null);
   const [forecastSummary, setForecastSummary] = useState<any>(null);
+
+  const [isProfile, setIsProfile] = useState(false);
+  const { data } = useGetProfile();
+  useEffect(() => {
+    if (!data) return;
+    if (data.status >= 400) {
+      setIsProfile(false);
+    } else {
+      setIsProfile(true);
+    }
+  }, [data]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +64,19 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
     fetchData();
   }, []);
 
+  const handleNavigation = () => {
+    showToast({
+      label: "Success",
+      message: "Forecast updated successfully",
+      type: "success",
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["getProfile"],
+    });
+    deleteData("forecast_payload");
+    deleteData("forecast_summary");
+    router.back();
+  };
   const { isPending, mutate } = useCreateProfile((response) => {
     if (response.status >= 400) {
       console.log(response.data);
@@ -57,19 +86,34 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
         type: "error",
       });
     } else {
-      deleteData("forecast_payload");
-      deleteData("forecast_summary");
-      router.replace("/(tabs)");
+      handleNavigation();
     }
   });
+
+  const { isPending: isSubmitting, mutate: updateProfile } = useUpdateProfile(
+    (response) => {
+      if (response.status >= 400) {
+        showToast({
+          label: "Error",
+          message: response.data.detail,
+          type: "error",
+        });
+        // handle error
+      } else {
+        handleNavigation();
+      }
+    }
+  );
   const handleSave = async () => {
     const isLoggedIn = await checkAuth();
     if (!isLoggedIn) return;
     const payload = await getData("forecast_payload");
+    if (!isProfile) {
+      mutate({ payload });
+      return;
+    }
 
-    mutate({
-      payload,
-    });
+    updateProfile({ payload });
   };
 
   const numberFormat = (value: number | string | undefined) => {
@@ -127,7 +171,12 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
           { backgroundColor: isDark ? colors.inputBox : "#f4f6f7" },
         ]}
       >
-        <Button label="Save" onPress={handleSave} loading={isPending} active />
+        <Button
+          label="Save"
+          onPress={handleSave}
+          loading={isPending || isSubmitting}
+          active
+        />
         <Pressable
           style={[styles.btnStyle, { borderColor: colors.primary }]}
           onPress={() => goToPrev?.(0)}
