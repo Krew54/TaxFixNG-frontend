@@ -35,6 +35,7 @@ type ScreenProps = {
   onBlur?: any;
   onFocus?: any;
   showLabel?: boolean;
+  formatNumber?: boolean;
 };
 
 export const Input = ({
@@ -59,10 +60,18 @@ export const Input = ({
   onBlur,
   onFocus,
   showLabel,
+  formatNumber = false,
+
   ...others
 }: ScreenProps) => {
   const [inputFocus, setInputFocus] = useState(false);
   const { colors } = useTheme();
+  const formatWithCommas = (value: string) => {
+    if (!value) return "";
+    const cleaned = value.replace(/,/g, "");
+    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   return (
     <Controller
       name={inputName}
@@ -118,15 +127,19 @@ export const Input = ({
               editable={editable}
               keyboardType={keyboardType}
               placeholder={placeholder}
-              onChangeText={onChange}
+              // onChangeText={onChange}
+              onChangeText={(text) => {
+                if (formatNumber) {
+                  const raw = text.replace(/[^0-9]/g, "");
+                  onChange(raw);
+                } else {
+                  onChange(text);
+                }
+              }}
               autoFocus={autoFocus}
               value={
-                keyboardType === "numeric"
-                  ? value
-                      ?.replace(".", "")
-                      ?.replace(",", "")
-                      ?.replace("-", "")
-                      ?.replace(" ", "")
+                formatNumber
+                  ? formatWithCommas(value)
                   : keyboardType === "email-address"
                   ? value?.trim()
                   : value

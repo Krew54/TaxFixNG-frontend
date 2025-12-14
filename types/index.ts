@@ -19,6 +19,22 @@ export type ForgetPasswordPayload = {
   email: string;
 };
 export type TabProps = {
-  goToNext?: () => any;
-  goToPrev?: () => any;
+  goToNext?: (index?: number) => any;
+  goToPrev?: (index?: number) => any;
+};
+export type EstimateTaxPayload = {
+  employment_income?: "string";
+  business_income?: string;
+  other_income?: string;
+  chargeable_gains?: string;
+  losses_allowed?: string;
+  capital_allowances?: string;
+  national_housing_fund?: string;
+  National_health_insurance_scheme?: string;
+  pension_contribution?: string;
+  mortgage_interest?: string;
+  life_insurance_premium?: string;
+  house_rent?: string;
+  period?: string;
+  employment_type?: string;
 };

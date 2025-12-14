@@ -6,7 +6,7 @@ import { ThemedText } from "@/components/themed-text";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
-import { checkAuth, globalStyles } from "@/utils";
+import { globalStyles } from "@/utils";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 
@@ -62,15 +62,15 @@ export default function HomeScreen() {
   const { colors, isDark } = useTheme();
 
   const handleForecastPress = async () => {
-    const isLoggedIn = await checkAuth();
-    if (!isLoggedIn) return;
+    // const isLoggedIn = await checkAuth();
+    // if (!isLoggedIn) return;
     router.push("/forecast");
   };
 
   const handleNavigation = async (screen: any) => {
     if (screen === "/forecast") {
-      const isLoggedIn = await checkAuth();
-      if (!isLoggedIn) return;
+      // const isLoggedIn = await checkAuth();
+      // if (!isLoggedIn) return;
       router.push(screen);
     } else {
       router.push(screen);

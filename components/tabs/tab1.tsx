@@ -1,64 +1,95 @@
+import { getData, storeData } from "@/helpers";
 import { useTheme } from "@/hooks/use-theme-color";
 import { TabProps } from "@/types";
 import { globalStyles } from "@/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Input } from "../common";
 import { CustomSwitch } from "../switch";
 import { ThemedText } from "../themed-text";
 
-export const Tab1 = ({ goToNext }: TabProps) => {
-  const [switchOn, setSwitchOn] = useState(false);
-  const { colors } = useTheme();
-  const { control } = useForm();
+const incomeTypes = [
+  {
+    name: "Salaried",
+    value: "salaried",
+  },
+  {
+    name: "Self Employed",
+    value: "self_employed",
+  },
+];
+const employmentIncomeTypes = [
+  {
+    name: "Monthly",
+    value: "monthly",
+  },
+  {
+    name: "Annually",
+    value: "annually",
+  },
+];
 
-  const incomeTypes = [
-    {
-      name: "Salaried",
-      value: "alaried",
-    },
-    {
-      name: "Self Employed",
-      value: "self_employed",
-    },
-    {
-      name: "Unemployed",
-      value: "unemployed",
-    },
-  ];
-  const employmentIncomeTypes = [
-    {
-      name: "Monthly",
-      value: "Monthly",
-    },
-    {
-      name: "Annually",
-      value: "annually",
-    },
-  ];
+export const Tab1 = ({ goToNext }: TabProps) => {
+  const [makeProfitSelling, setMakeProfitSelling] = useState(false);
+  const [haveOtherIncome, setHaveOtherIncome] = useState(false);
+  const { colors } = useTheme();
+  const {
+    control,
+    handleSubmit,
+    resetField,
+    reset,
+    formState: { isValid },
+  } = useForm({
+    mode: "onChange",
+  });
+
   const [selectedIncome, setSelectedIncome] = useState<{
     name: string;
     value: string;
   }>({
-    name: "",
-    value: "",
+    name: "Salaried",
+    value: "salaried",
   });
   const [selectedEmploymentIncome, setSelectedEmploymentIncome] = useState<{
     name: string;
     value: string;
   }>({
-    name: "",
-    value: "",
+    name: "Monthly",
+    value: "monthly",
   });
 
-  const handleContinue = async () => {
+  useEffect(() => {
+    const hydrate = async () => {
+      const stored = await getData("forecast_payload");
+
+      if (!stored) return;
+
+      const data = stored;
+
+      reset({
+        employment_income: data.employment_income?.toString() || "",
+        other_income: data.other_income?.toString() || "",
+        chargeable_gains: data.chargeable_gains?.toString() || "",
+      });
+    };
+
+    hydrate();
+  }, []);
+
+  const handleContinue = async (formData: any) => {
+    const payload = {
+      employment_type: selectedIncome.value,
+      employment_income_type: selectedEmploymentIncome.value,
+      employment_income: formData.employment_income,
+      other_income: haveOtherIncome ? formData.other_income : 0,
+      chargeable_gains: makeProfitSelling ? formData.chargeable_gains : 0,
+    };
+    await storeData("forecast_payload", payload);
+
     goToNext?.();
-    // const data = await getData("isLoggedIn");
-    // if (!data) {
-    //   router.push("/signup");
-    // }
   };
+
   return (
     <View>
       <ThemedText
@@ -199,54 +230,111 @@ export const Tab1 = ({ goToNext }: TabProps) => {
 
       {selectedEmploymentIncome.name && (
         <Input
-          inputName="annual_income"
+          inputName="employment_income"
           control={control}
           label={`Gross ${selectedEmploymentIncome.name} Income (₦)`}
-          placeholder="e.g 2,500,780"
+          placeholder="e.g 2,500,000"
           showLabel
           keyboardType="numeric"
+          rules={{
+            required: "Employment income required",
+          }}
+          formatNumber
         />
       )}
 
-      <View style={styles.switchWrapper}>
-        <ThemedText
-          style={{
-            flex: 1,
-          }}
-        >
-          Do you have other income?{" "}
-        </ThemedText>
-        <CustomSwitch
-          value={switchOn}
-          onValueChange={() => {
-            setSwitchOn(!switchOn);
-          }}
-        />
-      </View>
       <View
-        style={[
-          styles.switchWrapper,
-          {
-            marginTop: 0,
-          },
-        ]}
+        style={{
+          marginTop: globalStyles.margin.sm,
+        }}
       >
-        <ThemedText
-          style={{
-            flex: 1,
-          }}
-        >
-          Did you make profits from selling your assest like land, shares,
-          properties ?
-        </ThemedText>
-        <CustomSwitch
-          value={switchOn}
-          onValueChange={() => {
-            setSwitchOn(!switchOn);
-          }}
-        />
+        <View style={styles.switchWrapper}>
+          <ThemedText
+            style={{
+              flex: 1,
+            }}
+          >
+            Do you have other taxable income?{" "}
+          </ThemedText>
+          <CustomSwitch
+            value={haveOtherIncome}
+            onValueChange={(val) => {
+              setHaveOtherIncome(val);
+              if (!val) {
+                resetField("other_income");
+              }
+            }}
+          />
+        </View>
+        {haveOtherIncome && (
+          <Input
+            control={control}
+            label="Other Income"
+            inputName="other_income"
+            placeholder="e.g 3000"
+            showLabel
+            rules={{
+              required: haveOtherIncome ? "Other income required" : false,
+            }}
+            formatNumber
+          />
+        )}
       </View>
-      <Button label="Continue" onPress={handleContinue} active />
+
+      <View
+        style={{
+          marginTop: globalStyles.margin.sm,
+        }}
+      >
+        <View
+          style={[
+            styles.switchWrapper,
+            {
+              marginTop: 0,
+            },
+          ]}
+        >
+          <ThemedText
+            style={{
+              flex: 1,
+            }}
+          >
+            Did you make profits from selling your assest like land, shares,
+            properties ?
+          </ThemedText>
+          <CustomSwitch
+            value={makeProfitSelling}
+            onValueChange={(val) => {
+              setMakeProfitSelling(val);
+              if (!val) {
+                resetField("chargeable_gains");
+              }
+            }}
+          />
+        </View>
+
+        {makeProfitSelling && (
+          <Input
+            control={control}
+            label="Amount Gained"
+            inputName="chargeable_gains"
+            placeholder="e.g 3000"
+            showLabel
+            rules={{
+              required: makeProfitSelling ? "Amount gained required" : false,
+            }}
+            formatNumber
+          />
+        )}
+      </View>
+      <Button
+        label="Continue"
+        onPress={handleSubmit(handleContinue)}
+        active={isValid}
+        style={{
+          marginTop: globalStyles.margin.md,
+        }}
+      />
     </View>
   );
 };
@@ -256,7 +344,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: globalStyles.margin.sm,
-    marginBottom: globalStyles.margin.lg,
   },
 });

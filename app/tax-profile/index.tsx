@@ -1,14 +1,47 @@
 import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
-import { Input, ScreenHeader, ScreenWrapper } from "@/components/common";
+import {
+  Button,
+  Input,
+  ScreenHeader,
+  ScreenWrapper,
+} from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
+import { useCreateProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
 import { useForm } from "react-hook-form";
 
 export default function Index() {
-  const { control } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm({
+    mode: "onChange",
+  });
   const { colors, isDark } = useTheme();
+
+  const { isPending, mutate } = useCreateProfile((response) => {
+    if (response.status >= 400) {
+      // handle error
+    } else {
+      console.log(response.data);
+    }
+  });
+  const onSubmit = (data: any) => {
+    const { first_name, last_name, ...rest } = data;
+
+    const payload = {
+      ...rest,
+      name: `${first_name} ${last_name}`,
+    };
+    console.log(payload);
+
+    mutate({
+      payload,
+    });
+  };
   return (
     <ScreenWrapper>
       <ScreenHeader title="Tax Profile" />
@@ -42,6 +75,9 @@ export default function Index() {
                   placeholder="Enter First name"
                   label="First Name"
                   showLabel
+                  rules={{
+                    required: "First name is required",
+                  }}
                 />
               </View>
 
@@ -56,6 +92,9 @@ export default function Index() {
                   placeholder="Enter Last name"
                   label="Last Name"
                   showLabel
+                  rules={{
+                    required: "Last name is required",
+                  }}
                 />
               </View>
             </View>
@@ -76,6 +115,9 @@ export default function Index() {
                   placeholder="Enter State of Residence"
                   label="State"
                   showLabel
+                  rules={{
+                    required: "State is required",
+                  }}
                 />
               </View>
 
@@ -90,6 +132,9 @@ export default function Index() {
                   placeholder="Enter Employment Type"
                   label="Employment Type"
                   showLabel
+                  rules={{
+                    required: "Employment type is required",
+                  }}
                 />
               </View>
             </View>
@@ -115,25 +160,38 @@ export default function Index() {
             <View style={styles.inputWrapper}>
               <Input
                 control={control}
-                inputName="gross_income"
+                inputName="employment_income"
                 label="Annual Gross Income"
                 showLabel
                 placeholder="e.g 350,000"
+                rules={{
+                  required: "Gross Income is required",
+                }}
+                keyboardType="numeric"
+                formatNumber
               />
               <Input
                 control={control}
-                inputName="annual_rent"
+                inputName="house_rent"
                 label="Annual Rent"
                 showLabel
                 placeholder="e.g 350,000"
+                rules={{
+                  required: "Rent is required",
+                }}
+                formatNumber
+                keyboardType="numeric"
               />
-              <Input
+              {/* <Input
                 control={control}
                 inputName="employer_provided_housing"
                 label="Employer-provided housing"
                 showLabel
                 placeholder="e.g Yes/No"
-              />
+                rules={{
+                    required: "State is required",
+                  }}
+              /> */}
             </View>
           </>
 
@@ -159,20 +217,39 @@ export default function Index() {
             <View style={[styles.inputWrapper, {}]}>
               <Input
                 control={control}
-                inputName="pension_contributions"
+                inputName="pension_contribution"
                 label="Pension Contributions"
                 showLabel
                 placeholder="e.g 350,000"
+                rules={{
+                  required: "Pension Contribution is required",
+                }}
+                keyboardType="numeric"
+                formatNumber
               />
               <Input
                 control={control}
-                inputName="nhis_contributions"
+                inputName="National_health_insurance_scheme"
                 label="NHIS Contributions"
                 showLabel
                 placeholder="e.g 350,000"
+                rules={{
+                  required: "NHIS is required",
+                }}
+                keyboardType="numeric"
+                formatNumber
               />
             </View>
           </>
+          <Button
+            label="Save"
+            onPress={handleSubmit(onSubmit)}
+            active={isValid}
+            loading={isPending}
+            style={{
+              marginTop: globalStyles.margin.xl,
+            }}
+          />
         </View>
       </ScrollView>
     </ScreenWrapper>

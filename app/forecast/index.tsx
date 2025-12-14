@@ -50,12 +50,20 @@ export default function Index() {
   }, [data]);
   const { colors, isDark } = useTheme();
 
-  const goToNext = () => {
-    setActiveTab((prev) => Math.min(prev + 1, TABS.length - 1));
+  const goToNext = (index?: number) => {
+    if (typeof index === "number") {
+      setActiveTab(Math.min(index, TABS.length - 1));
+    } else {
+      setActiveTab((prev) => Math.min(prev + 1, TABS.length - 1));
+    }
   };
 
-  const goToPrev = () => {
-    setActiveTab((prev) => Math.max(prev - 1, 0));
+  const goToPrev = (index?: number) => {
+    if (typeof index === "number") {
+      setActiveTab(Math.max(index, 0));
+    } else {
+      setActiveTab((prev) => Math.max(prev - 1, 0));
+    }
   };
   return (
     <ScreenWrapper>
@@ -98,11 +106,17 @@ export default function Index() {
           <View style={styles.tabsWrapper}>
             {TABS.map((item, index) => {
               const isSelected = index === activeTab;
+              const isLastTab = index === TABS.length - 1;
 
               return (
                 <Pressable
                   key={index}
-                  onPress={() => setActiveTab(index)}
+                  disabled={isLastTab}
+                  onPress={() => {
+                    if (!isLastTab) {
+                      setActiveTab(index);
+                    }
+                  }}
                   style={[
                     styles.tabButton,
                     {
