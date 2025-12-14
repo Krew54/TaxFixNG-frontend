@@ -7,7 +7,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { formatWithCommas, globalStyles } from "@/utils";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
@@ -90,7 +90,7 @@ export default function Index() {
               color: colors.white,
             }}
           >
-            {isProfile ? `₦${data?.data?.estimated_tax_due}` : "₦0"}
+            {isProfile ? `₦${formatWithCommas(data?.estimated_tax)}` : "₦0"}
           </ThemedText>
           <ThemedText
             style={{

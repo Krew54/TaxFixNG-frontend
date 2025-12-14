@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Input } from "../common";
-import { CustomSwitch } from "../switch";
 import { ThemedText } from "../themed-text";
 
 const rentSituation = [
@@ -241,7 +240,7 @@ export const Tab3 = ({ goToNext }: TabProps) => {
         formatNumber
       />
 
-      <View style={styles.switchWrapper}>
+      {/* <View style={styles.switchWrapper}>
         <ThemedText
           style={{
             flex: 1,
@@ -255,12 +254,15 @@ export const Tab3 = ({ goToNext }: TabProps) => {
             setSwitchOn(!switchOn);
           }}
         />
-      </View>
+      </View> */}
       <Button
         label="Continue"
         loading={isPending}
         onPress={handleSubmit(handleContinue)}
         active
+        style={{
+          marginTop: globalStyles.margin.lg,
+        }}
       />
     </View>
   );
@@ -272,6 +274,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: globalStyles.margin.sm,
-    marginBottom: globalStyles.margin.lg,
   },
 });

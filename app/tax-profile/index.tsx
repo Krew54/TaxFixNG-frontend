@@ -7,41 +7,120 @@ import {
   ScreenWrapper,
 } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
-import { useCreateProfile } from "@/hooks/profile";
+import {
+  useCreateProfile,
+  useGetProfile,
+  useUpdateProfile,
+} from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { checkAuth, globalStyles, showToast } from "@/utils";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { queryClient } from "../_layout";
 
 export default function Index() {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { isValid },
   } = useForm({
     mode: "onChange",
   });
   const { colors, isDark } = useTheme();
+  const [profile, setProfile] = useState({});
+  const [isProfile, setIsProfile] = useState(false);
+
+  const { data, isLoading } = useGetProfile();
+  useEffect(() => {
+    if (!data) return;
+    if (data.status >= 400) {
+      setIsProfile(false);
+    } else {
+      setProfile(data);
+      reset({
+        first_name: data?.Name.split(" ")[0] || "",
+        last_name: data?.Name.split(" ")[1] || "",
+        state_of_residence: data?.state_of_residence || "",
+        employment_type: data?.employment_type || "",
+        employment_income: data?.employment_income.toString() || 0,
+        house_rent: data?.house_rent.toString() || "",
+        pension_contribution: data.pension_contribution.toString() || "",
+        National_health_insurance_scheme:
+          data.National_health_insurance_scheme.toString() || "",
+      });
+      setIsProfile(true);
+    }
+  }, [data]);
 
   const { isPending, mutate } = useCreateProfile((response) => {
     if (response.status >= 400) {
+      console.log(response.data);
+      showToast({
+        label: "Error",
+        message: response.data.detail,
+        type: "error",
+      });
       // handle error
     } else {
-      console.log(response.data);
+      showToast({
+        label: "Success",
+        message: "Tax profile created successfully",
+        type: "success",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getProfile"],
+      });
+      router.back();
     }
   });
-  const onSubmit = (data: any) => {
+
+  const { isPending: isSubmitting, mutate: updateProfile } = useUpdateProfile(
+    (response) => {
+      if (response.status >= 400) {
+        console.log(response.data);
+        showToast({
+          label: "Error",
+          message: response.data.detail,
+          type: "error",
+        });
+        // handle error
+      } else {
+        showToast({
+          label: "Success",
+          message: "Tax profile updated successfully",
+          type: "success",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["getProfile"],
+        });
+        router.back();
+      }
+    }
+  );
+  const onSubmit = async (data: any) => {
+    const isLoggedIn = await checkAuth();
+    if (!isLoggedIn) return;
+
     const { first_name, last_name, ...rest } = data;
 
     const payload = {
       ...rest,
       name: `${first_name} ${last_name}`,
     };
-    console.log(payload);
 
+    if (isProfile) {
+      updateProfile({
+        payload,
+      });
+      return;
+    }
     mutate({
       payload,
     });
   };
+
   return (
     <ScreenWrapper>
       <ScreenHeader title="Tax Profile" />
@@ -242,10 +321,10 @@ export default function Index() {
             </View>
           </>
           <Button
-            label="Save"
+            label={isProfile ? "Update" : "Save"}
             onPress={handleSubmit(onSubmit)}
             active={isValid}
-            loading={isPending}
+            loading={isPending || isSubmitting}
             style={{
               marginTop: globalStyles.margin.xl,
             }}

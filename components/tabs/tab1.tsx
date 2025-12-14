@@ -276,6 +276,7 @@ export const Tab1 = ({ goToNext }: TabProps) => {
             rules={{
               required: haveOtherIncome ? "Other income required" : false,
             }}
+            keyboardType="numeric"
             formatNumber
           />
         )}
@@ -323,6 +324,7 @@ export const Tab1 = ({ goToNext }: TabProps) => {
             rules={{
               required: makeProfitSelling ? "Amount gained required" : false,
             }}
+            keyboardType="numeric"
             formatNumber
           />
         )}

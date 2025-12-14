@@ -46,10 +46,11 @@ const toastConfig = {
   ),
 };
 
+export const queryClient = new QueryClient();
+
 export default function RootLayout() {
   const { isDark, colors } = useTheme();
   const navigationTheme = isDark ? DarkTheme : DefaultTheme;
-  const queryClient = new QueryClient();
 
   const [loaded, error] = useFonts({
     "Inter-Black": require("../assets/fonts/Inter/Inter-Black.ttf"),

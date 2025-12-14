@@ -1,7 +1,9 @@
-import { getData } from "@/helpers";
+import { deleteData, getData } from "@/helpers";
+import { useCreateProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { TabProps } from "@/types";
-import { checkAuth, globalStyles } from "@/utils";
+import { checkAuth, globalStyles, showToast } from "@/utils";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Button } from "../common";
@@ -46,9 +48,28 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
     fetchData();
   }, []);
 
+  const { isPending, mutate } = useCreateProfile((response) => {
+    if (response.status >= 400) {
+      console.log(response.data);
+      showToast({
+        label: "Error",
+        message: response.data.detail,
+        type: "error",
+      });
+    } else {
+      deleteData("forecast_payload");
+      deleteData("forecast_summary");
+      router.replace("/(tabs)");
+    }
+  });
   const handleSave = async () => {
     const isLoggedIn = await checkAuth();
     if (!isLoggedIn) return;
+    const payload = await getData("forecast_payload");
+
+    mutate({
+      payload,
+    });
   };
 
   const numberFormat = (value: number | string | undefined) => {
@@ -84,9 +105,9 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
           </ThemedText>
         </View>
         <View style={styles.cardRow}>
-          <ThemedText style={{ flex: 1 }}>Total Withholdings:</ThemedText>
+          <ThemedText style={{ flex: 1 }}>Total Income:</ThemedText>
           <ThemedText>
-            {numberFormat(forecastSummary?.total_withholdings || 0)}
+            {numberFormat(forecastSummary?.total_income || 0)}
           </ThemedText>
         </View>
         <View style={styles.cardRow}>
@@ -106,7 +127,7 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
           { backgroundColor: isDark ? colors.inputBox : "#f4f6f7" },
         ]}
       >
-        <Button label="Save" onPress={handleSave} active />
+        <Button label="Save" onPress={handleSave} loading={isPending} active />
         <Pressable
           style={[styles.btnStyle, { borderColor: colors.primary }]}
           onPress={() => goToPrev?.(0)}

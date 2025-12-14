@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { deleteData, getData } from "@/helpers";
 import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { formatWithCommas, globalStyles } from "@/utils";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 
@@ -37,19 +37,19 @@ export default function Account() {
   const TAX_PROFILE = [
     {
       label: "State",
-      value: isProfile ? data.data?.state : "-",
+      value: isProfile ? data?.state_of_residence : "-",
     },
     {
-      label: "Income",
-      value: isProfile ? `₦${data.data?.income}` : "-",
+      label: "Annual Income",
+      value: isProfile ? `₦${formatWithCommas(data?.employment_income)}` : "-",
     },
     {
-      label: "Dependants",
-      value: isProfile ? data.data?.dependants : "-",
+      label: "Total Deductions",
+      value: isProfile ? data.data?.dependants || "Not set" : "-",
     },
     {
-      label: "Rent",
-      value: isProfile ? `₦${data.data?.rent}` : "-",
+      label: "Rent Relief",
+      value: isProfile ? `₦${formatWithCommas(data?.house_rent)}` : "-",
     },
   ];
 

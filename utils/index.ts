@@ -17,6 +17,13 @@ export const showToast = ({
     topOffset: 60,
   });
 };
+export const formatWithCommas = (value?: string | number) => {
+  if (value === null || value === undefined || value === "") return "";
+
+  const stringValue = String(value).replace(/,/g, "");
+  return stringValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 export * from "./checkAuth";
 export * from "./fonts";
 export * from "./globalStyles";

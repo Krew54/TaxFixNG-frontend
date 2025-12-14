@@ -1,5 +1,5 @@
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { formatWithCommas, globalStyles } from "@/utils";
 import React, { useState } from "react";
 import { Controller } from "react-hook-form";
 import {
@@ -66,11 +66,6 @@ export const Input = ({
 }: ScreenProps) => {
   const [inputFocus, setInputFocus] = useState(false);
   const { colors } = useTheme();
-  const formatWithCommas = (value: string) => {
-    if (!value) return "";
-    const cleaned = value.replace(/,/g, "");
-    return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
 
   return (
     <Controller
