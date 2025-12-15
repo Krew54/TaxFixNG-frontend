@@ -38,3 +38,10 @@ export type EstimateTaxPayload = {
   period?: string;
   employment_type?: string;
 };
+export type ExpensesPayload = {
+  category?: any;
+  document_name?: any;
+  amount?: any;
+  relevant_tax_year?: any;
+  file?: any;
+};

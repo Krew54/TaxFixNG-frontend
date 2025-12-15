@@ -66,7 +66,7 @@ export default function Account() {
         {
           label: "Saved Expenses",
           caption: "Manage the expenses saved",
-          screen: "",
+          screen: "/expenses",
           icon: require("../../assets/icons/bag.png"),
         },
         {

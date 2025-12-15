@@ -37,8 +37,8 @@ const NEXT_STEPS = [
     screen: "/saved-forecasts",
   },
   {
-    label: "Add Your First Tax Expenses",
-    screen: "",
+    label: "Add Your Tax Expenses",
+    screen: "/add-expense",
   },
   {
     label: "Read how Nigerian taxes work",

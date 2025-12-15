@@ -13,6 +13,7 @@ const service = axios.create({
 service.interceptors.request.use(
   async function (config) {
     const token = await getData("token");
+    config.headers["Content-Type"] = "multipart/form-data";
     // Detect FormData and change headers
     if (config.data instanceof FormData) {
       config.headers["Content-Type"] = "multipart/form-data";

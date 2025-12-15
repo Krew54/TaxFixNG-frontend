@@ -5,12 +5,18 @@ import { Controller } from "react-hook-form";
 import {
   Image,
   KeyboardType,
+  Modal,
   Pressable,
   StyleSheet,
   TextInput,
   View,
 } from "react-native";
 import { ThemedText } from "../themed-text";
+
+type Option = {
+  label: string;
+  value: string;
+};
 
 type ScreenProps = {
   control: any;
@@ -36,6 +42,10 @@ type ScreenProps = {
   onFocus?: any;
   showLabel?: boolean;
   formatNumber?: boolean;
+
+  /** Select specific */
+  type?: "text" | "select";
+  options?: Option[];
 };
 
 export const Input = ({
@@ -61,10 +71,12 @@ export const Input = ({
   onFocus,
   showLabel,
   formatNumber = false,
-
+  type = "text",
+  options = [],
   ...others
 }: ScreenProps) => {
   const [inputFocus, setInputFocus] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   const { colors } = useTheme();
 
   return (
@@ -75,14 +87,11 @@ export const Input = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           {showLabel && (
-            <ThemedText
-              style={{
-                marginTop: globalStyles.margin.sm,
-              }}
-            >
+            <ThemedText style={{ marginTop: globalStyles.margin.sm }}>
               {label}
             </ThemedText>
           )}
+
           <View
             style={[
               styles.inputWrapper,
@@ -90,7 +99,6 @@ export const Input = ({
                 marginTop: showLabel
                   ? globalStyles.margin.xs
                   : globalStyles.margin.sm,
-
                 backgroundColor: colors.inputBox,
                 borderColor: inputFocus
                   ? colors.primary
@@ -107,53 +115,74 @@ export const Input = ({
               </View>
             )}
 
-            <TextInput
-              maxLength={maxLength && maxLength}
-              secureTextEntry={secureTextEntry}
-              style={[
-                styles.inputStyle,
-                {
-                  color: colors.text,
-                  backgroundColor: colors.inputBox,
-                },
-              ]}
-              selectionColor={colors.body}
-              cursorColor={colors.primary}
-              editable={editable}
-              keyboardType={keyboardType}
-              placeholder={placeholder}
-              // onChangeText={onChange}
-              onChangeText={(text) => {
-                if (formatNumber) {
-                  const raw = text.replace(/[^0-9]/g, "");
-                  onChange(raw);
-                } else {
-                  onChange(text);
+            {/* TEXT INPUT */}
+            {type === "text" ? (
+              <TextInput
+                maxLength={maxLength}
+                secureTextEntry={secureTextEntry}
+                style={[
+                  styles.inputStyle,
+                  {
+                    color: colors.text,
+                    backgroundColor: colors.inputBox,
+                  },
+                ]}
+                selectionColor={colors.body}
+                cursorColor={colors.primary}
+                editable={editable}
+                keyboardType={keyboardType}
+                placeholder={placeholder}
+                onChangeText={(text) => {
+                  if (formatNumber) {
+                    const raw = text.replace(/[^0-9]/g, "");
+                    onChange(raw);
+                  } else {
+                    onChange(text);
+                  }
+                }}
+                autoFocus={autoFocus}
+                value={
+                  formatNumber
+                    ? formatWithCommas(value)
+                    : keyboardType === "email-address"
+                    ? value?.trim()
+                    : value
                 }
-              }}
-              autoFocus={autoFocus}
-              value={
-                formatNumber
-                  ? formatWithCommas(value)
-                  : keyboardType === "email-address"
-                  ? value?.trim()
-                  : value
-              }
-              onFocus={() => {
-                setInputFocus(true);
-                onFocus && onFocus();
-              }}
-              onBlur={() => {
-                setInputFocus(false);
-                onBlur && onBlur();
-              }}
-              returnKeyType={returnKeyType}
-              placeholderTextColor={colors.body}
-              ref={sref}
-              onSubmitEditing={onSubmitEditing}
-              textContentType={secureTextEntry ? "oneTimeCode" : "none"}
-              {...others}
-            />
+                onFocus={() => {
+                  setInputFocus(true);
+                  onFocus?.();
+                }}
+                onBlur={() => {
+                  setInputFocus(false);
+                  onBlur?.();
+                }}
+                returnKeyType={returnKeyType}
+                placeholderTextColor={colors.body}
+                ref={sref}
+                onSubmitEditing={onSubmitEditing}
+                textContentType={secureTextEntry ? "oneTimeCode" : "none"}
+                {...others}
+              />
+            ) : (
+              /* SELECT INPUT */
+              <Pressable
+                style={styles.inputStyle}
+                onPress={() => {
+                  setInputFocus(true);
+                  setShowOptions(true);
+                }}
+              >
+                <ThemedText
+                  style={{
+                    color: value ? colors.text : colors.body,
+                  }}
+                >
+                  {options.find((o) => o.value === value)?.label ||
+                    placeholder ||
+                    "Select option"}
+                </ThemedText>
+              </Pressable>
+            )}
 
             {rightButton && (
               <Pressable style={styles.iconBtn} onPress={rightButtonPress}>
@@ -171,14 +200,48 @@ export const Input = ({
               </Pressable>
             )}
           </View>
+
+          {/* SELECT MODAL */}
+          {type === "select" && (
+            <Modal
+              transparent
+              animationType="fade"
+              visible={showOptions}
+              onRequestClose={() => setShowOptions(false)}
+              statusBarTranslucent
+            >
+              <Pressable
+                style={styles.modalOverlay}
+                onPress={() => setShowOptions(false)}
+              >
+                <View
+                  style={[
+                    styles.modalContent,
+                    { backgroundColor: colors.inputBox },
+                  ]}
+                >
+                  {options.map((item) => (
+                    <Pressable
+                      key={item.value}
+                      style={styles.option}
+                      onPress={() => {
+                        onChange(item.value);
+                        setShowOptions(false);
+                        setInputFocus(false);
+                      }}
+                    >
+                      <ThemedText>{item.label}</ThemedText>
+                    </Pressable>
+                  ))}
+                </View>
+              </Pressable>
+            </Modal>
+          )}
+
           {error && (
             <View style={{ marginBottom: globalStyles.margin.xs - 4 }}>
-              <ThemedText
-                style={{
-                  color: colors.red,
-                }}
-              >
-                {error?.message}
+              <ThemedText style={{ color: colors.red }}>
+                {error.message}
               </ThemedText>
             </View>
           )}
@@ -200,7 +263,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    borderRadius: globalStyles.radius.sm,
+    justifyContent: "center",
     fontFamily: "Inter-Regular",
   },
   iconBtn: {
@@ -210,5 +273,21 @@ const styles = StyleSheet.create({
   iconStyle: {
     width: 20,
     height: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "center",
+    padding: 24,
+  },
+  modalContent: {
+    borderRadius: 12,
+    paddingVertical: 8,
+  },
+  option: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
 });
