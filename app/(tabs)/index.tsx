@@ -30,11 +30,11 @@ const QUICK_ACTION = [
 const NEXT_STEPS = [
   {
     label: "Complete Your Tax Profile",
-    screen: "",
+    screen: "/tax-profile",
   },
   {
     label: "Check Your Tax Forecast",
-    screen: "/forecast",
+    screen: "/saved-forecasts",
   },
   {
     label: "Add Your First Tax Expenses",
@@ -64,7 +64,11 @@ export default function HomeScreen() {
   const handleForecastPress = async () => {
     // const isLoggedIn = await checkAuth();
     // if (!isLoggedIn) return;
-    router.push("/forecast");
+    if (!isProfile) {
+      router.push("/forecast");
+      return;
+    }
+    router.push("/saved-forecasts");
   };
 
   const handleNavigation = async (screen: any) => {
