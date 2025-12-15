@@ -15,6 +15,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -225,7 +226,12 @@ export default function Index() {
             <View style={styles.documentInfo}>
               <ThemedText style={{ flex: 1 }}>{documentName}</ThemedText>
               <Pressable onPress={handleRemoveDocument}>
-                <ThemedText style={{ color: colors.red }}>Remove</ThemedText>
+                <ThemedText
+                  type="defaultSemiBold"
+                  style={{ color: colors.red }}
+                >
+                  Remove
+                </ThemedText>
               </Pressable>
             </View>
           ) : null}
@@ -260,25 +266,49 @@ export default function Index() {
           onPress={() => setShowModal(false)}
         >
           <View
-            style={[styles.modalContent, { backgroundColor: colors.inputBox }]}
+            style={[
+              styles.modalContent,
+              { backgroundColor: colors.background },
+            ]}
           >
             <TouchableOpacity
               style={styles.modalOption}
               onPress={handleScanCamera}
             >
-              <ThemedText>Scan with Camera</ThemedText>
+              <View style={styles.iconWrapper}>
+                <Image
+                  source={require("../../assets/icons/camera.png")}
+                  style={styles.iconStyle}
+                  resizeMode="contain"
+                />
+              </View>
+              <ThemedText type="defaultSemiBold">Scan with Camera</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalOption}
               onPress={handleUploadImage}
             >
-              <ThemedText>Upload Image</ThemedText>
+              <View style={styles.iconWrapper}>
+                <Image
+                  source={require("../../assets/icons/image.png")}
+                  style={styles.iconStyle}
+                  resizeMode="contain"
+                />
+              </View>
+              <ThemedText type="defaultSemiBold">Upload an Image</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalOption}
               onPress={handleUploadFile}
             >
-              <ThemedText>Upload File</ThemedText>
+              <View style={styles.iconWrapper}>
+                <Image
+                  source={require("../../assets/icons/file.png")}
+                  style={styles.iconStyle}
+                  resizeMode="contain"
+                />
+              </View>
+              <ThemedText type="defaultSemiBold">Upload a File</ThemedText>
             </TouchableOpacity>
           </View>
         </Pressable>
@@ -314,10 +344,7 @@ const styles = StyleSheet.create({
     marginRight: globalStyles.margin.xs + 4,
   },
   documentInfo: {
-    flexDirection: "row",
-    alignItems: "center",
     marginTop: globalStyles.margin.sm,
-    paddingHorizontal: globalStyles.padding.sm,
   },
   modalOverlay: {
     flex: 1,
@@ -331,5 +358,20 @@ const styles = StyleSheet.create({
   },
   modalOption: {
     paddingVertical: globalStyles.padding.sm,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconWrapper: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
+    backgroundColor: "#f4f7f7",
+    marginRight: globalStyles.margin.sm,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
   },
 });

@@ -1,16 +1,21 @@
-import { ScreenHeader, ScreenWrapper } from "@/components/common";
+import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
-import { useGetExpensess } from "@/hooks/expenses";
+import { useDeleteExpense, useGetExpensess } from "@/hooks/expenses";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { formatWithCommas, globalStyles } from "@/utils";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
   View,
 } from "react-native";
+import { queryClient } from "../_layout";
 
 type ListType = {
   amount: string;
@@ -23,6 +28,78 @@ type ListType = {
   updated_at: string;
   user_email: string;
 };
+
+const ExpenseCard = ({ item }: { item: ListType }) => {
+  const { colors } = useTheme();
+
+  const { mutate: deleteExpense, isPending: isDeleting } = useDeleteExpense(
+    (response) => {
+      if (response.status >= 400) {
+        console.log(response.data);
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["getExpenses"],
+        });
+      }
+    }
+  );
+
+  const handleDeleteExpense = (doc_id: string) => {
+    Alert.alert(
+      "Delete Expense",
+      "Are you sure you want to delete this expense? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            deleteExpense({ doc_id });
+          },
+        },
+      ]
+    );
+  };
+  return (
+    <View style={styles.expenseCard}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <ThemedText
+          type="defaultSemiBold"
+          style={{ textTransform: "capitalize" }}
+        >
+          {item.category?.replaceAll("_", " ")}
+        </ThemedText>
+        {isDeleting ? (
+          <ActivityIndicator color={colors.body} size={"small"} />
+        ) : (
+          <Pressable onPress={() => handleDeleteExpense(item.id)}>
+            <Ionicons name="trash-outline" size={20} color={colors.secondary} />
+          </Pressable>
+        )}
+      </View>
+
+      <ThemedText
+        type="defaultSemiBold"
+        style={{
+          color: colors.primary,
+          marginVertical: globalStyles.margin.xs - 4,
+        }}
+      >
+        {item.document_name}(₦{formatWithCommas(item.amount)})
+      </ThemedText>
+
+      <ThemedText style={{ color: colors.body }}>
+        Added on {moment(item.created_at).format("MMMM D, YYYY")}
+      </ThemedText>
+    </View>
+  );
+};
 export default function Index() {
   const { colors } = useTheme();
   const [expenses, setExpenses] = useState<ListType[]>([]);
@@ -30,6 +107,7 @@ export default function Index() {
 
   useEffect(() => {
     if (!data) return;
+
     setExpenses(data);
   }, [data]);
 
@@ -55,11 +133,45 @@ export default function Index() {
       ) : (
         <FlatList
           data={expenses}
-          renderItem={({ index, item }) => (
-            <Pressable key={index}>
-              <ThemedText>{item.document_name}</ThemedText>
-            </Pressable>
+          renderItem={({ item }) => <ExpenseCard item={item} />}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyRecordWrapper}>
+              <ThemedText
+                type="subtitle"
+                style={{
+                  textAlign: "center",
+                  color: colors.primary,
+                }}
+              >
+                No Expense Saved
+              </ThemedText>
+              <ThemedText
+                style={{
+                  color: colors.body,
+                  textAlign: "center",
+                  width: "90%",
+                  alignSelf: "center",
+                  marginTop: globalStyles.margin.sm + 4,
+                  marginBottom: globalStyles.margin.md,
+                }}
+              >
+                Start adding tax relevant expenses you want to keep track of for
+                your tax forecast.
+              </ThemedText>
+              <Button
+                label="Add First Expense"
+                onPress={() => router.push("/add-expense")}
+                active
+              />
+            </View>
           )}
+          ItemSeparatorComponent={() => (
+            <View style={{ marginTop: globalStyles.margin.sm }} />
+          )}
+          contentContainerStyle={{
+            marginHorizontal: globalStyles.wrapper,
+            paddingTop: globalStyles.padding.lg,
+          }}
         />
       )}
     </ScreenWrapper>
@@ -109,6 +221,32 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 16,
   },
   modalOption: {
+    paddingVertical: globalStyles.padding.sm,
+  },
+  emptyRecordWrapper: {
+    paddingHorizontal: globalStyles.padding.sm,
+    paddingVertical: globalStyles.margin.md + 2,
+    borderRadius: 12,
+    // --- Shadow (iOS) ---
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    // --- Shadow (Android) ---
+    elevation: 4,
+    backgroundColor: "#F4F6F7",
+  },
+  expenseCard: {
+    borderRadius: 12,
+    // --- Shadow (iOS) ---
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    // --- Shadow (Android) ---
+    elevation: 4,
+    backgroundColor: "#F4F6F7",
+    paddingHorizontal: globalStyles.margin.md + 2,
     paddingVertical: globalStyles.padding.sm,
   },
 });
