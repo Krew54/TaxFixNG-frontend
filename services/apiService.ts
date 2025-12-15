@@ -6,7 +6,7 @@ import { Alert } from "react-native";
 
 // doc: http://51.20.117.202:8000/docs
 const service = axios.create({
-  baseURL: "http://51.20.117.202:8000",
+  baseURL: "http://51.20.117.202:8000/api",
 });
 
 // Add a request interceptor

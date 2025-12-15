@@ -67,7 +67,7 @@ export default function Account() {
           label: "Saved Expenses",
           caption: "Manage the expenses saved",
           screen: "/expenses",
-          icon: require("../../assets/icons/bag.png"),
+          icon: require("../../assets/icons/pencil.png"),
         },
         {
           label: "Reset Password",
@@ -75,6 +75,8 @@ export default function Account() {
           screen: "",
           icon: require("../../assets/icons/settings.png"),
         },
+
+        // 👇 AUTH ACTION
         ...(token
           ? [
               {
@@ -83,7 +85,14 @@ export default function Account() {
                 icon: require("../../assets/icons/logout.png"),
               },
             ]
-          : []),
+          : [
+              {
+                label: "Log in",
+                caption: "Sign in to your account.",
+                screen: "/login",
+                icon: require("../../assets/icons/login.png"),
+              },
+            ]),
       ]);
     };
 
