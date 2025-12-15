@@ -122,7 +122,7 @@ export default function Index() {
     } else {
       showToast({
         label: "Error",
-        message: "Expenses addedd successfully",
+        message: "Expense added successfully",
         type: "success",
       });
       router.back();

@@ -19,7 +19,7 @@ const QUICK_ACTION = [
   {
     label: "Log Expenses",
     icon: require("../../assets/icons/document.png"),
-    screen: "",
+    screen: "/expenses",
   },
   {
     label: "Learn Tax",
@@ -87,7 +87,7 @@ export default function HomeScreen() {
       <ScrollView>
         <View style={styles.mainWrapper}>
           <ThemedText type="defaultSemiBold">
-            Hi Ade <HelloWave />
+            Hi <HelloWave />
           </ThemedText>
           <ThemedText style={{ marginBottom: globalStyles.margin.md + 2 }}>
             Here is your tax overview.

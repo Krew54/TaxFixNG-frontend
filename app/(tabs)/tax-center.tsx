@@ -23,7 +23,7 @@ export default function TexCenter() {
       <ScrollView>
         <View style={styles.mainWrapper}>
           <ThemedText style={{ marginBottom: globalStyles.margin.md + 2 }}>
-            <ThemedText type="defaultSemiBold">Hi Ade</ThemedText> <HelloWave />{" "}
+            <ThemedText type="defaultSemiBold">Hi </ThemedText> <HelloWave />{" "}
             welcome to your Tax Centre.
           </ThemedText>
 
@@ -84,7 +84,7 @@ export default function TexCenter() {
             <Button
               label="ADD NOW"
               active
-              onPress={() => {}}
+              onPress={() => router.push("/add-expense")}
               style={styles.buttonStyle}
             />
           </View>
