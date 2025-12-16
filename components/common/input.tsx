@@ -7,6 +7,7 @@ import {
   KeyboardType,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   TextInput,
   View,
@@ -77,7 +78,12 @@ export const Input = ({
 }: ScreenProps) => {
   const [inputFocus, setInputFocus] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [search, setSearch] = useState("");
   const { colors } = useTheme();
+
+  const filteredOptions = options.filter((item) =>
+    item.label.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <Controller
@@ -212,28 +218,63 @@ export const Input = ({
             >
               <Pressable
                 style={styles.modalOverlay}
-                onPress={() => setShowOptions(false)}
+                onPress={() => {
+                  setShowOptions(false);
+                  setSearch("");
+                  setInputFocus(false);
+                }}
               >
-                <View
+                <Pressable
                   style={[
                     styles.modalContent,
-                    { backgroundColor: colors.inputBox },
+                    {
+                      backgroundColor: colors.inputBox,
+                      maxHeight: "60%",
+                    },
                   ]}
+                  onPress={() => {}}
                 >
-                  {options.map((item) => (
-                    <Pressable
-                      key={item.value}
-                      style={styles.option}
-                      onPress={() => {
-                        onChange(item.value);
-                        setShowOptions(false);
-                        setInputFocus(false);
-                      }}
-                    >
-                      <ThemedText>{item.label}</ThemedText>
-                    </Pressable>
-                  ))}
-                </View>
+                  {/* SEARCH */}
+                  <TextInput
+                    placeholder="Search..."
+                    placeholderTextColor={colors.body}
+                    value={search}
+                    onChangeText={setSearch}
+                    style={[
+                      styles.searchInput,
+                      {
+                        color: colors.text,
+                        borderColor: colors.body,
+                      },
+                    ]}
+                  />
+
+                  {/* OPTIONS */}
+                  <ScrollView showsVerticalScrollIndicator={false}>
+                    {filteredOptions.map((item) => (
+                      <Pressable
+                        key={item.value}
+                        style={styles.option}
+                        onPress={() => {
+                          onChange(item.value);
+                          setShowOptions(false);
+                          setInputFocus(false);
+                          setSearch("");
+                        }}
+                      >
+                        <ThemedText>{item.label}</ThemedText>
+                      </Pressable>
+                    ))}
+
+                    {filteredOptions.length === 0 && (
+                      <View style={{ padding: 16 }}>
+                        <ThemedText style={{ color: colors.body }}>
+                          No results found
+                        </ThemedText>
+                      </View>
+                    )}
+                  </ScrollView>
+                </Pressable>
               </Pressable>
             </Modal>
           )}
@@ -282,7 +323,16 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     borderRadius: 12,
-    paddingVertical: 8,
+    paddingBottom: 8,
+    overflow: "hidden",
+  },
+  searchInput: {
+    height: 44,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    margin: 12,
+    fontFamily: "Inter-Regular",
   },
   option: {
     paddingVertical: 14,

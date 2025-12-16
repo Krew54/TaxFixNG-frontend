@@ -1,14 +1,25 @@
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
-import { HelloWave } from "@/components/hello-wave";
 import { ThemedText } from "@/components/themed-text";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Username } from "@/components/username";
+import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { checkAuth, globalStyles } from "@/utils";
 import { router } from "expo-router";
+import { useEffect, useState } from "react";
 
 export default function TexCenter() {
   const { colors } = useTheme();
+
+  const [name, setName] = useState("");
+  const { data, isLoading } = useGetProfile();
+
+  useEffect(() => {
+    if (!data) return;
+    setName(data?.Name || "");
+  }, [data]);
 
   const handlePlanNow = async () => {
     const isLoggedIn = await checkAuth();
@@ -22,9 +33,21 @@ export default function TexCenter() {
       <ScreenHeader title="Tax Center" hideBackBtn />
       <ScrollView>
         <View style={styles.mainWrapper}>
+          {isLoading ? (
+            <Skeleton
+              width={90}
+              style={{
+                marginVertical: 7,
+              }}
+            />
+          ) : (
+            <ThemedText type="defaultSemiBold">
+              <Username name={name} />
+            </ThemedText>
+          )}
+
           <ThemedText style={{ marginBottom: globalStyles.margin.md + 2 }}>
-            <ThemedText type="defaultSemiBold">Hi </ThemedText> <HelloWave />{" "}
-            welcome to your Tax Centre.
+            Welcome to your Tax Centre.
           </ThemedText>
 
           <View
@@ -115,7 +138,7 @@ export default function TexCenter() {
             <Button
               label="READ NOW"
               active
-              onPress={() => {}}
+              onPress={() => router.push("/learn")}
               style={styles.buttonStyle}
             />
           </View>

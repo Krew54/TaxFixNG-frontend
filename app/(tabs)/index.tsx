@@ -1,9 +1,9 @@
 import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
-import { HelloWave } from "@/components/hello-wave";
 import { ThemedText } from "@/components/themed-text";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Username } from "@/components/username";
 import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
@@ -24,7 +24,7 @@ const QUICK_ACTION = [
   {
     label: "Learn Tax",
     icon: require("../../assets/icons/knowledge.png"),
-    screen: "",
+    screen: "/learn",
   },
 ];
 const NEXT_STEPS = [
@@ -42,12 +42,12 @@ const NEXT_STEPS = [
   },
   {
     label: "Read how Nigerian taxes work",
-    screen: "",
+    screen: "/learn",
   },
 ];
 export default function HomeScreen() {
-  const [profile, setProfile] = useState(null);
   const [isProfile, setIsProfile] = useState(false);
+  const [name, setName] = useState("");
   const { data, isLoading } = useGetProfile();
 
   useEffect(() => {
@@ -55,6 +55,7 @@ export default function HomeScreen() {
     if (data.status >= 400) {
       setIsProfile(false);
     } else {
+      setName(data.Name);
       setIsProfile(true);
     }
   }, [data]);
@@ -86,9 +87,18 @@ export default function HomeScreen() {
       <ScreenHeader title="Home" hideBackBtn />
       <ScrollView>
         <View style={styles.mainWrapper}>
-          <ThemedText type="defaultSemiBold">
-            Hi <HelloWave />
-          </ThemedText>
+          {isLoading ? (
+            <Skeleton
+              width={90}
+              style={{
+                marginVertical: 7,
+              }}
+            />
+          ) : (
+            <ThemedText type="defaultSemiBold">
+              <Username name={name} />
+            </ThemedText>
+          )}
           <ThemedText style={{ marginBottom: globalStyles.margin.md + 2 }}>
             Here is your tax overview.
           </ThemedText>

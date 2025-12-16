@@ -14,7 +14,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Button } from "../common";
 import { ThemedText } from "../themed-text";
 
-export const Tab4 = ({ goToPrev }: TabProps) => {
+export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
   const { colors, isDark } = useTheme();
 
   const [forecastPayload, setForecastPayload] = useState<any>(null);
@@ -57,6 +57,7 @@ export const Tab4 = ({ goToPrev }: TabProps) => {
       }
 
       if (summary) {
+        setEstimatedTax?.(summary.estimated_tax_due || 0);
         setForecastSummary(summary);
       }
     };

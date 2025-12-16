@@ -5,10 +5,9 @@ import { Tab3 } from "@/components/tabs/tab3";
 import { Tab4 } from "@/components/tabs/tab4";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { formatWithCommas, globalStyles } from "@/utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 const TABS = [
@@ -37,17 +36,8 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState(0);
   const TabComponent = TABS[activeTab].component;
 
-  const [isProfile, setIsProfile] = useState(false);
-  const { data, isLoading } = useGetProfile();
+  const [estimatedTax, setEstimatedTax] = useState<number>(0);
 
-  useEffect(() => {
-    if (!data) return;
-    if (data.status >= 400) {
-      setIsProfile(false);
-    } else {
-      setIsProfile(true);
-    }
-  }, [data]);
   const { colors, isDark } = useTheme();
 
   const goToNext = (index?: number) => {
@@ -90,7 +80,7 @@ export default function Index() {
               color: colors.white,
             }}
           >
-            {isProfile ? `₦${formatWithCommas(data?.estimated_tax)}` : "₦0"}
+            ₦{formatWithCommas(estimatedTax)}
           </ThemedText>
           <ThemedText
             style={{
@@ -143,7 +133,11 @@ export default function Index() {
       </View>
       <ScrollView>
         <ThemedView style={styles.mainWrapper}>
-          <TabComponent goToNext={goToNext} goToPrev={goToPrev} />
+          <TabComponent
+            goToNext={goToNext}
+            goToPrev={goToPrev}
+            setEstimatedTax={setEstimatedTax}
+          />
         </ThemedView>
       </ScrollView>
     </ScreenWrapper>

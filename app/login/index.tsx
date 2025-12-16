@@ -1,12 +1,12 @@
 import { Button, Input, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { storeData } from "@/helpers";
+import { getData, storeData } from "@/helpers";
 import { useLogin } from "@/hooks/auth";
 import { useTheme } from "@/hooks/use-theme-color";
 import { EMAIL_REGEX, globalStyles, showToast } from "@/utils";
 import { Link, router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 
@@ -17,11 +17,21 @@ type InputTypes = {
 export default function Index() {
   const [hidePassword, setHidePassword] = useState(true);
   const { colors, isDark } = useTheme();
-  const { control, formState, handleSubmit, watch } = useForm<InputTypes>({
-    mode: "onChange",
-  });
-
+  const { control, formState, handleSubmit, watch, setValue } =
+    useForm<InputTypes>({
+      mode: "onChange",
+    });
   const email = watch("email");
+
+  useEffect(() => {
+    const getEmail = async () => {
+      const email = await getData("email");
+      if (email) setValue("email", email);
+    };
+
+    getEmail();
+  }, []);
+
   const { isPending, mutate } = useLogin((res) => {
     if (res.status >= 400) {
       let message = "";
@@ -50,6 +60,7 @@ export default function Index() {
   });
 
   const onSubmit: SubmitHandler<InputTypes> = (data) => {
+    storeData("email", data.email);
     mutate({
       payload: {
         username: data.email?.toLowerCase(),

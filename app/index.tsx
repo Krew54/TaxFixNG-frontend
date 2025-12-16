@@ -1,75 +1,27 @@
-import { storeData } from "@/helpers";
-import { useLogin } from "@/hooks/auth";
-import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles, showToast } from "@/utils";
-import { Redirect, router } from "expo-router";
-import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { getData } from "@/helpers";
+import { Redirect } from "expo-router";
+import { useEffect, useState } from "react";
 
-type InputTypes = {
-  email: string;
-  password: string;
-};
 export default function Index() {
-  const [hidePassword, setHidePassword] = useState(true);
-  const { colors, isDark } = useTheme();
-  const { control, formState, handleSubmit, watch } = useForm<InputTypes>({
-    mode: "onChange",
-  });
+  const [redirectTo, setRedirectTo] = useState<"/login" | "/(tabs)" | null>(
+    null
+  );
 
-  const email = watch("email");
-  const { isPending, mutate } = useLogin((res) => {
-    if (res.status >= 400) {
-      let message = "";
-      if (Array.isArray(res.data.detail)) {
-        const msgs = res.data.detail.map((err: any) => err.msg);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await getData("token");
 
-        // Remove duplicates
-        const uniqueMsgs = [...new Set(msgs)];
-
-        message = uniqueMsgs.join(", ");
+      if (token) {
+        setRedirectTo("/login");
       } else {
-        message = res.data.detail;
+        setRedirectTo("/(tabs)");
       }
-      if (message.includes("not verified")) {
-        router.push(`/otp/${email}`);
-      }
-      showToast({
-        label: "Error",
-        message,
-        type: "error",
-      });
-    } else {
-      storeData("token", res.data.access_token);
-      router.replace("/(tabs)");
-    }
-  });
+    };
 
-  const onSubmit: SubmitHandler<InputTypes> = (data) => {
-    mutate({
-      payload: {
-        username: data.email?.toLowerCase(),
-        password: data.password,
-      },
-    });
-    // router.replace("/(tabs)");
-  };
-  return <Redirect href={"/(tabs)"} />;
+    checkAuth();
+  }, []);
+
+  if (!redirectTo) return null; // or splash/loading screen
+
+  return <Redirect href={redirectTo} />;
 }
-
-const styles = StyleSheet.create({
-  mainWrapper: {
-    flex: 1,
-    marginTop: globalStyles.margin.xxl4,
-    paddingHorizontal: globalStyles.wrapper,
-  },
-  btnStyle: {
-    marginTop: globalStyles.margin.xl,
-  },
-  flexRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: globalStyles.margin.xs,
-  },
-});

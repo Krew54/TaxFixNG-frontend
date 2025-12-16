@@ -8,7 +8,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useCreateExpense } from "@/hooks/expenses";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles, showToast } from "@/utils";
+import { checkAuth, EXPENSE_TYPES, globalStyles, showToast } from "@/utils";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
@@ -32,16 +32,6 @@ type InputTypes = {
   file: string;
   documentName: string; // store the file name
 };
-
-const EXPENSE_TYPES = [
-  { label: "Income", value: "income" },
-  { label: "Other Income", value: "other_incomes" },
-  { label: "Operating Expenses", value: "operating_expenses" },
-  { label: "Other Expenses", value: "other_expenses" },
-  { label: "Life Insurance", value: "life_insurance" },
-  { label: "House Rent", value: "house_rent" },
-  { label: "Statutory Deductions", value: "statutory_deductions" },
-];
 
 export default function Index() {
   const { colors } = useTheme();
@@ -128,8 +118,12 @@ export default function Index() {
       router.back();
     }
   });
+
   /* -------------------- Submit -------------------- */
-  const onSubmit: SubmitHandler<InputTypes> = (data) => {
+  const onSubmit: SubmitHandler<InputTypes> = async (data) => {
+    const isLoggedIn = await checkAuth();
+    if (!isLoggedIn) return;
+
     const formData = new FormData();
 
     // Add regular fields
@@ -213,7 +207,11 @@ export default function Index() {
                 +
               </ThemedText>
             </View>
-            <View>
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
               <ThemedText type="defaultSemiBold">Add Document</ThemedText>
               <ThemedText style={{ marginTop: globalStyles.margin.xs - 4 }}>
                 Upload receipt or proof (PDF, JPG, PNG)

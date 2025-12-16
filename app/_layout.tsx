@@ -83,10 +83,10 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
             }}
-            initialRouteName="(tabs)"
+            // initialRouteName="(tabs)"
           >
-            <Stack.Screen name="(tabs)" />
             <Stack.Screen name="index" />
+            <Stack.Screen name="(tabs)" />
           </Stack>
           <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
         </View>

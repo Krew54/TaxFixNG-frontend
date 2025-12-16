@@ -1,4 +1,4 @@
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import {
   Button,
@@ -13,7 +13,13 @@ import {
   useUpdateProfile,
 } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
-import { checkAuth, globalStyles, showToast } from "@/utils";
+import {
+  checkAuth,
+  EMPLOYMENT_TYPES,
+  globalStyles,
+  showToast,
+  STATES,
+} from "@/utils";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -128,12 +134,12 @@ export default function Index() {
           <>
             <View style={styles.rowWrapper}>
               <ThemedText type="defaultSemiBold">Personal Info</ThemedText>
-              <Pressable>
+              {/* <Pressable>
                 <Image
                   source={require("../../assets/icons/edit.png")}
                   style={styles.editIcon}
                 />
-              </Pressable>
+              </Pressable> */}
             </View>
 
             <View
@@ -190,12 +196,12 @@ export default function Index() {
                 <Input
                   control={control}
                   inputName="state_of_residence"
-                  placeholder="Enter State of Residence"
                   label="State"
+                  placeholder="Select state"
                   showLabel
-                  rules={{
-                    required: "State is required",
-                  }}
+                  type="select"
+                  rules={{ required: "State is required" }}
+                  options={STATES}
                 />
               </View>
 
@@ -207,12 +213,12 @@ export default function Index() {
                 <Input
                   control={control}
                   inputName="employment_type"
-                  placeholder="Enter Employment Type"
                   label="Employment Type"
+                  placeholder="Select employment type"
                   showLabel
-                  rules={{
-                    required: "Employment type is required",
-                  }}
+                  type="select"
+                  rules={{ required: "Employment type is required" }}
+                  options={EMPLOYMENT_TYPES}
                 />
               </View>
             </View>
@@ -228,12 +234,12 @@ export default function Index() {
               ]}
             >
               <ThemedText type="defaultSemiBold">Income & Housing </ThemedText>
-              <Pressable>
+              {/* <Pressable>
                 <Image
                   source={require("../../assets/icons/edit.png")}
                   style={styles.editIcon}
                 />
-              </Pressable>
+              </Pressable> */}
             </View>
             <View style={styles.inputWrapper}>
               <Input
@@ -285,12 +291,12 @@ export default function Index() {
               <ThemedText type="defaultSemiBold">
                 Contributions & Relief{" "}
               </ThemedText>
-              <Pressable>
+              {/* <Pressable>
                 <Image
                   source={require("../../assets/icons/edit.png")}
                   style={styles.editIcon}
                 />
-              </Pressable>
+              </Pressable> */}
             </View>
             <View style={[styles.inputWrapper, {}]}>
               <Input

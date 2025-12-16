@@ -8,7 +8,7 @@ export const checkAuth = async (): Promise<boolean> => {
   if (!token) {
     Alert.alert(
       "Login Required",
-      "You need to log in to create or view forecast.",
+      "You need to log in to complete this operation.",
       [
         { text: "Cancel", style: "cancel" },
         {

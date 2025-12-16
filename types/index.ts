@@ -21,6 +21,7 @@ export type ForgetPasswordPayload = {
 export type TabProps = {
   goToNext?: (index?: number) => any;
   goToPrev?: (index?: number) => any;
+  setEstimatedTax?: (value: number) => void;
 };
 export type EstimateTaxPayload = {
   employment_income?: "string";
