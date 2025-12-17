@@ -15,6 +15,10 @@ export type ResetPasswordPayload = {
   new_password: string;
   otp: string;
 };
+export type ChangePasswordPayload = {
+  old_password: string | any;
+  new_password: string;
+};
 export type ForgetPasswordPayload = {
   email: string;
 };

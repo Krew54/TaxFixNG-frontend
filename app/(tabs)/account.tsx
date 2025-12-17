@@ -72,7 +72,7 @@ export default function Account() {
         {
           label: "Reset Password",
           caption: "Change your password",
-          screen: "",
+          screen: "/change-password",
           icon: require("../../assets/icons/settings.png"),
         },
 
@@ -160,6 +160,7 @@ export default function Account() {
                     type="defaultSemiBold"
                     style={{
                       color: colors.primary,
+                      textTransform: "capitalize",
                     }}
                   >
                     {item.value}
