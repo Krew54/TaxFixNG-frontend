@@ -261,6 +261,7 @@ export default function Account() {
             <ThemedText>Help & FAQ</ThemedText>
           </Pressable>
           <Pressable
+            onPress={() => router.push("/terms-of-use")}
             style={({ pressed }) => [
               styles.supportBtnWrapper,
               pressed && {
@@ -271,6 +272,7 @@ export default function Account() {
             <ThemedText>Terms and conditions</ThemedText>
           </Pressable>
           <Pressable
+            onPress={() => router.push("/privacy-policy")}
             style={({ pressed }) => [
               styles.supportBtnWrapper,
               pressed && {

@@ -38,6 +38,7 @@ export default function Index() {
 
   const [isProfile, setIsProfile] = useState(false);
   const { data } = useGetProfile();
+
   useEffect(() => {
     if (!data) return;
     if (data.status >= 400) {
@@ -48,7 +49,7 @@ export default function Index() {
         last_name: data?.Name.split(" ")[1] || "",
         state_of_residence: data?.state_of_residence || "",
         employment_type: data?.employment_type || "",
-        employment_income: data?.employment_income.toString() || 0,
+        employment_income: data?.employment_income.toString() || "",
         house_rent: data?.house_rent.toString() || "",
         pension_contribution: data.pension_contribution.toString() || "",
         National_health_insurance_scheme:
@@ -83,7 +84,6 @@ export default function Index() {
   const { isPending: isSubmitting, mutate: updateProfile } = useUpdateProfile(
     (response) => {
       if (response.status >= 400) {
-        console.log(response.data);
         showToast({
           label: "Error",
           message: response.data.detail,
@@ -108,11 +108,24 @@ export default function Index() {
     const isLoggedIn = await checkAuth();
     if (!isLoggedIn) return;
 
-    const { first_name, last_name, ...rest } = data;
+    const {
+      first_name,
+      last_name,
+      employment_income,
+      house_rent,
+      pension_contribution,
+      National_health_insurance_scheme,
+      ...rest
+    } = data;
 
     const payload = {
       ...rest,
       name: `${first_name} ${last_name}`,
+      employment_income: Number(employment_income) || 0,
+      house_rent: Number(house_rent) || 0,
+      pension_contribution: Number(pension_contribution) || 0,
+      National_health_insurance_scheme:
+        Number(National_health_insurance_scheme) || 0,
     };
 
     if (isProfile) {
@@ -248,9 +261,6 @@ export default function Index() {
                 label="Annual Gross Income"
                 showLabel
                 placeholder="e.g 350,000"
-                rules={{
-                  required: "Gross Income is required",
-                }}
                 keyboardType="numeric"
                 formatNumber
               />
@@ -260,9 +270,6 @@ export default function Index() {
                 label="Annual Rent"
                 showLabel
                 placeholder="e.g 350,000"
-                rules={{
-                  required: "Rent is required",
-                }}
                 formatNumber
                 keyboardType="numeric"
               />
@@ -305,9 +312,6 @@ export default function Index() {
                 label="Pension Contributions"
                 showLabel
                 placeholder="e.g 350,000"
-                rules={{
-                  required: "Pension Contribution is required",
-                }}
                 keyboardType="numeric"
                 formatNumber
               />
@@ -317,9 +321,6 @@ export default function Index() {
                 label="NHIS Contributions"
                 showLabel
                 placeholder="e.g 350,000"
-                rules={{
-                  required: "NHIS is required",
-                }}
                 keyboardType="numeric"
                 formatNumber
               />

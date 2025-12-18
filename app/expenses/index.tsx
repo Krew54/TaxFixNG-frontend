@@ -1,9 +1,9 @@
 import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
-import { useDeleteExpense, useGetExpensess } from "@/hooks/expenses";
+import { useDeleteExpense, useGetExpenses } from "@/hooks/expenses";
 import { useTheme } from "@/hooks/use-theme-color";
 import { formatWithCommas, globalStyles } from "@/utils";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -75,13 +75,36 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
         >
           {item.category?.replaceAll("_", " ")}
         </ThemedText>
-        {isDeleting ? (
-          <ActivityIndicator color={colors.body} size={"small"} />
-        ) : (
-          <Pressable onPress={() => handleDeleteExpense(item.id)}>
-            <Ionicons name="trash-outline" size={20} color={colors.secondary} />
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 10,
+          }}
+        >
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/edit-expense",
+                params: {
+                  item: JSON.stringify(item),
+                },
+              })
+            }
+          >
+            <FontAwesome5 name="edit" size={20} color={colors.primary} />
           </Pressable>
-        )}
+          {isDeleting ? (
+            <ActivityIndicator color={colors.body} size={"small"} />
+          ) : (
+            <Pressable onPress={() => handleDeleteExpense(item.id)}>
+              <Ionicons
+                name="trash-outline"
+                size={20}
+                color={colors.secondary}
+              />
+            </Pressable>
+          )}
+        </View>
       </View>
 
       <ThemedText
@@ -100,10 +123,11 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
     </View>
   );
 };
+
 export default function Index() {
   const { colors } = useTheme();
   const [expenses, setExpenses] = useState<ListType[]>([]);
-  const { data, isLoading } = useGetExpensess();
+  const { data, isLoading } = useGetExpenses();
 
   useEffect(() => {
     if (!data) return;

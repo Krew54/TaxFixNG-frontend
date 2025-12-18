@@ -1,11 +1,11 @@
 import { get } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetExpenses = () => {
+export const useGetExpense = ({ category }: { category: String }) => {
   const { data, isSuccess, isLoading, isFetching } = useQuery({
-    queryKey: ["getExpenses"],
+    queryKey: ["getExpense"],
     queryFn: () => {
-      return get("/documents");
+      return get(`/documents/${category}`);
     },
   });
 

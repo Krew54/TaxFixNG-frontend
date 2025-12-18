@@ -6,12 +6,12 @@ import {
 } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { useCreateExpense } from "@/hooks/expenses";
+import { useEditExpense } from "@/hooks/expenses";
 import { useTheme } from "@/hooks/use-theme-color";
 import { checkAuth, EXPENSE_TYPES, globalStyles, showToast } from "@/utils";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
@@ -23,6 +23,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { queryClient } from "../_layout";
 
 type InputTypes = {
   category: string;
@@ -36,14 +37,21 @@ type InputTypes = {
 export default function Index() {
   const { colors } = useTheme();
   const [showModal, setShowModal] = useState(false);
+  const { item } = useLocalSearchParams<{ item: any }>();
+  const parsedItem = JSON.parse(item);
 
-  const { control, watch, handleSubmit, formState, setValue, register } =
+  const { control, watch, handleSubmit, formState, setValue, register, reset } =
     useForm<InputTypes>({
       mode: "onChange",
     });
 
   useEffect(() => {
-    setValue("relevant_tax_year", "2026");
+    reset({
+      amount: parsedItem.amount,
+      category: parsedItem.category,
+      document_name: parsedItem.document_name,
+      relevant_tax_year: "2026",
+    });
     register("file", {
       // required: "Supporting document is required",
     });
@@ -102,7 +110,7 @@ export default function Index() {
     setValue("documentName", "");
   };
 
-  const { isPending, mutate } = useCreateExpense((response) => {
+  const { isPending, mutate } = useEditExpense((response) => {
     if (response.status >= 400) {
       console.log(response.data);
 
@@ -112,9 +120,12 @@ export default function Index() {
       //   type: "error",
       // });
     } else {
+      queryClient.invalidateQueries({
+        queryKey: ["getExpenses"],
+      });
       showToast({
         label: "Success",
-        message: "Expense added successfully",
+        message: "Expense Edited successfully",
         type: "success",
       });
       router.back();
@@ -149,6 +160,7 @@ export default function Index() {
 
     mutate({
       payload: formData as any,
+      doc_id: parsedItem.id,
     });
   };
 
@@ -156,7 +168,7 @@ export default function Index() {
 
   return (
     <ScreenWrapper>
-      <ScreenHeader title="Expenses" />
+      <ScreenHeader title="Edit Expense" />
       <ScrollView>
         <ThemedView style={styles.mainWrapper}>
           <ThemedText style={{ marginBottom: globalStyles.margin.lg }}>
@@ -243,7 +255,7 @@ export default function Index() {
 
           {/* Submit */}
           <Button
-            label="Save Expense"
+            label="Edit Expense"
             onPress={handleSubmit(onSubmit)}
             active={formState.isValid}
             style={styles.btnStyle}
