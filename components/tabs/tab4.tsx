@@ -74,6 +74,7 @@ export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
     queryClient.invalidateQueries({
       queryKey: ["getProfile"],
     });
+
     deleteData("forecast_payload");
     deleteData("forecast_summary");
     router.back();
@@ -149,12 +150,12 @@ export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
             {numberFormat(forecastSummary?.total_deductions || 0)}
           </ThemedText>
         </View>
-        <View style={styles.cardRow}>
+        {/* <View style={styles.cardRow}>
           <ThemedText style={{ flex: 1 }}>Total Income:</ThemedText>
           <ThemedText>
             {numberFormat(forecastSummary?.total_income || 0)}
           </ThemedText>
-        </View>
+        </View> */}
         <View style={styles.cardRow}>
           <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
             Estimated Tax Due:
@@ -213,7 +214,7 @@ export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
 
         <View style={styles.cardRow}>
           <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
-            Subtotal:
+            Total Taxable income:
           </ThemedText>
           <ThemedText>
             {numberFormat(forecastPayload?.grossIncome || 0)}
@@ -275,7 +276,7 @@ export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
         </View>
         <View style={styles.cardRow}>
           <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
-            Subtotal:
+            Total Deductions:
           </ThemedText>
           <ThemedText>
             {numberFormat(forecastPayload?.totalDeductions || 0)}

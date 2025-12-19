@@ -232,6 +232,7 @@ export default function Index() {
                   type="select"
                   rules={{ required: "Employment type is required" }}
                   options={EMPLOYMENT_TYPES}
+                  editable={false}
                 />
               </View>
             </View>
@@ -263,6 +264,7 @@ export default function Index() {
                 placeholder="e.g 350,000"
                 keyboardType="numeric"
                 formatNumber
+                editable={false}
               />
               <Input
                 control={control}
@@ -272,6 +274,7 @@ export default function Index() {
                 placeholder="e.g 350,000"
                 formatNumber
                 keyboardType="numeric"
+                editable={false}
               />
               {/* <Input
                 control={control}
@@ -314,6 +317,7 @@ export default function Index() {
                 placeholder="e.g 350,000"
                 keyboardType="numeric"
                 formatNumber
+                editable={false}
               />
               <Input
                 control={control}
@@ -323,6 +327,7 @@ export default function Index() {
                 placeholder="e.g 350,000"
                 keyboardType="numeric"
                 formatNumber
+                editable={false}
               />
             </View>
           </>

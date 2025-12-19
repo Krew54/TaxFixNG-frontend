@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Username } from "@/components/username";
 import { useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
-import { globalStyles } from "@/utils";
+import { formatWithCommas, globalStyles } from "@/utils";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 
@@ -47,6 +47,7 @@ const NEXT_STEPS = [
 ];
 export default function HomeScreen() {
   const [isProfile, setIsProfile] = useState(false);
+  const [estimatedTax, setEstimatedTax] = useState(0);
   const [name, setName] = useState("");
   const { data, isLoading } = useGetProfile();
 
@@ -55,6 +56,7 @@ export default function HomeScreen() {
     if (data.status >= 400) {
       setIsProfile(false);
     } else {
+      setEstimatedTax(data.estimated_tax);
       setName(data.Name);
       setIsProfile(true);
     }
@@ -74,8 +76,6 @@ export default function HomeScreen() {
 
   const handleNavigation = async (screen: any) => {
     if (screen === "/forecast") {
-      // const isLoggedIn = await checkAuth();
-      // if (!isLoggedIn) return;
       router.push(screen);
     } else {
       router.push(screen);
@@ -136,7 +136,7 @@ export default function HomeScreen() {
                     style={{ marginTop: 4, color: colors.primary }}
                     type="subtitle"
                   >
-                    ₦0
+                    ₦{formatWithCommas(estimatedTax)}
                   </ThemedText>
                 )}
               </View>

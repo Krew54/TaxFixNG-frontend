@@ -25,6 +25,7 @@ export default function Index() {
       setIsProfile(true);
     }
   }, [data]);
+
   return (
     <ScreenWrapper>
       <ScreenHeader title="Saved Forecasts" />
@@ -69,7 +70,9 @@ export default function Index() {
                   ₦{formatWithCommas(profile?.estimated_tax)}
                 </ThemedText>
                 <ThemedText style={{ color: colors.body }}>
-                  {moment(profile.date_created).format("MMMM D, YYYY")}
+                  {moment(profile.date_modified || profile.date_created).format(
+                    "MMMM D, YYYY"
+                  )}
                 </ThemedText>
               </View>
               <Image

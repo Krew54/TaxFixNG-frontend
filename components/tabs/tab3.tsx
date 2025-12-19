@@ -45,6 +45,8 @@ export const Tab3 = ({ goToNext }: TabProps) => {
     name: "Yes",
     value: "yes",
   });
+  const [employmentIncomeType, setEmploymentIncomeType] = useState("monthly");
+
   const { colors } = useTheme();
   const { control, reset, handleSubmit } = useForm();
 
@@ -53,7 +55,7 @@ export const Tab3 = ({ goToNext }: TabProps) => {
       const stored = await getData("forecast_payload");
 
       if (!stored) return;
-
+      setEmploymentIncomeType(stored.employment_income_type);
       const data = stored;
 
       // restore toggle
@@ -63,6 +65,7 @@ export const Tab3 = ({ goToNext }: TabProps) => {
 
       reset({
         house_rent: data.house_rent?.toString() || "",
+        mortgage_interest: data.mortgage_interest?.toString() || "",
       });
     };
 
@@ -71,6 +74,8 @@ export const Tab3 = ({ goToNext }: TabProps) => {
 
   const { isPending, mutate } = useEstimateTax(async (response) => {
     if (response.status >= 400) {
+      // console.log(response.data);
+
       // handle error
       return;
     }
@@ -83,10 +88,19 @@ export const Tab3 = ({ goToNext }: TabProps) => {
     const parsedExisting = existing ? existing : {};
     const payload = {
       ...parsedExisting,
-      house_rent: formData.house_rent,
+      house_rent:
+        selectedRentSituation.value === "rented_apartment"
+          ? formData.house_rent
+          : 0,
+      mortgage_interest:
+        selectedRentSituation.value === "self_owned" &&
+        selectedMortgage.value === "yes"
+          ? formData.mortgage_interest
+          : 0,
     };
 
     await storeData("forecast_payload", payload);
+
     mutate({ payload });
   };
   return (
@@ -164,81 +178,116 @@ export const Tab3 = ({ goToNext }: TabProps) => {
         </View>
       </ScrollView>
 
-      <>
-        <ThemedText
-          style={{
-            marginTop: globalStyles.margin.sm,
-            color: colors.body,
-          }}
-        >
-          Do you pay mortgage on the apartment ?
-        </ThemedText>
+      {selectedRentSituation.value === "rented_apartment" && (
+        <>
+          <Input
+            inputName="house_rent"
+            control={control}
+            label={`${
+              employmentIncomeType &&
+              employmentIncomeType.charAt(0).toUpperCase() +
+                employmentIncomeType.slice(1)
+            } Rent Amount (₦)`}
+            placeholder="e.g 2,500,000"
+            showLabel
+            keyboardType="numeric"
+            formatNumber
+            rules={{
+              required: "Rent Amount is required",
+            }}
+          />
+        </>
+      )}
 
-        <View style={{ flexDirection: "row", marginTop: 10, gap: 12 }}>
-          {haveMortgage.map((item, index) => {
-            const isSelected = selectedMortgage.value === item.value;
+      {selectedRentSituation.value === "self_owned" && (
+        <>
+          <ThemedText
+            style={{
+              marginTop: globalStyles.margin.sm,
+              color: colors.body,
+            }}
+          >
+            Do you pay mortgage on the apartment ?
+          </ThemedText>
 
-            return (
-              <View
-                key={index}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingVertical: 6,
-                  paddingHorizontal: 10,
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  borderColor: isSelected ? colors.primary : colors.border,
-                  backgroundColor: isSelected
-                    ? colors.primary + "22"
-                    : "transparent",
-                }}
-                onTouchEnd={() =>
-                  setSelectedMortgage({
-                    name: item.name,
-                    value: item.value,
-                  })
-                }
-              >
+          <View style={{ flexDirection: "row", marginTop: 10, gap: 12 }}>
+            {haveMortgage.map((item, index) => {
+              const isSelected = selectedMortgage.value === item.value;
+
+              return (
                 <View
+                  key={index}
                   style={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: 4,
-                    borderWidth: 2,
-                    borderColor: colors.primary,
-                    justifyContent: "center",
+                    flexDirection: "row",
                     alignItems: "center",
-                    marginRight: 6,
+                    paddingVertical: 6,
+                    paddingHorizontal: 10,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    borderColor: isSelected ? colors.primary : colors.border,
                     backgroundColor: isSelected
-                      ? colors.primary
+                      ? colors.primary + "22"
                       : "transparent",
                   }}
-                />
-
-                <ThemedText
-                  style={{
-                    color: colors.text,
-                    fontSize: 14,
-                  }}
+                  onTouchEnd={() =>
+                    setSelectedMortgage({
+                      name: item.name,
+                      value: item.value,
+                    })
+                  }
                 >
-                  {item.name}
-                </ThemedText>
-              </View>
-            );
-          })}
-        </View>
-      </>
+                  <View
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: 4,
+                      borderWidth: 2,
+                      borderColor: colors.primary,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginRight: 6,
+                      backgroundColor: isSelected
+                        ? colors.primary
+                        : "transparent",
+                    }}
+                  />
 
-      <Input
-        inputName="house_rent"
-        control={control}
-        label="Annual Rent Amount (₦)"
-        placeholder="e.g 2,500,000"
-        showLabel
-        keyboardType="numeric"
-        formatNumber
-      />
+                  <ThemedText
+                    style={{
+                      color: colors.text,
+                      fontSize: 14,
+                    }}
+                  >
+                    {item.name}
+                  </ThemedText>
+                </View>
+              );
+            })}
+          </View>
+        </>
+      )}
+
+      {selectedMortgage.value === "yes" &&
+        selectedRentSituation.value === "self_owned" && (
+          <>
+            <Input
+              inputName="mortgage_interest"
+              control={control}
+              label={`${
+                employmentIncomeType &&
+                employmentIncomeType.charAt(0).toUpperCase() +
+                  employmentIncomeType.slice(1)
+              } Mortgage Interest (₦)`}
+              placeholder="e.g 500,000"
+              showLabel
+              keyboardType="numeric"
+              formatNumber
+              rules={{
+                required: "Mortgage interest is required",
+              }}
+            />
+          </>
+        )}
 
       {/* <View style={styles.switchWrapper}>
         <ThemedText

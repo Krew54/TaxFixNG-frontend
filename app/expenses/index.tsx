@@ -60,6 +60,7 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
       ]
     );
   };
+
   return (
     <View style={styles.expenseCard}>
       <View
@@ -131,7 +132,6 @@ export default function Index() {
 
   useEffect(() => {
     if (!data) return;
-
     setExpenses(data);
   }, [data]);
 
