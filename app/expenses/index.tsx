@@ -2,8 +2,8 @@ import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { useDeleteExpense, useGetExpenses } from "@/hooks/expenses";
 import { useTheme } from "@/hooks/use-theme-color";
-import { formatWithCommas, globalStyles } from "@/utils";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { fonts, formatWithCommas, globalStyles } from "@/utils";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -34,17 +34,13 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
 
   const { mutate: deleteExpense, isPending: isDeleting } = useDeleteExpense(
     (response) => {
-      if (response.status >= 400) {
-        console.log(response.data);
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: ["getExpenses"],
-        });
+      if (response.status < 400) {
+        queryClient.invalidateQueries({ queryKey: ["getExpenses"] });
       }
     }
   );
 
-  const handleDeleteExpense = (doc_id: string) => {
+  const handleDeleteExpense = () => {
     Alert.alert(
       "Delete Expense",
       "Are you sure you want to delete this expense? This action cannot be undone.",
@@ -53,9 +49,7 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
-            deleteExpense({ doc_id });
-          },
+          onPress: () => deleteExpense({ doc_id: item.id }),
         },
       ]
     );
@@ -63,6 +57,7 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
 
   return (
     <View style={styles.expenseCard}>
+      {/* HEADER */}
       <View
         style={{
           flexDirection: "row",
@@ -76,38 +71,18 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
         >
           {item.category?.replaceAll("_", " ")}
         </ThemedText>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 10,
-          }}
-        >
-          <Pressable
-            onPress={() =>
-              router.push({
-                pathname: "/edit-expense",
-                params: {
-                  item: JSON.stringify(item),
-                },
-              })
-            }
-          >
-            <FontAwesome5 name="edit" size={20} color={colors.primary} />
-          </Pressable>
-          {isDeleting ? (
-            <ActivityIndicator color={colors.body} size={"small"} />
-          ) : (
-            <Pressable onPress={() => handleDeleteExpense(item.id)}>
-              <Ionicons
-                name="trash-outline"
-                size={20}
-                color={colors.secondary}
-              />
-            </Pressable>
-          )}
-        </View>
+
+        {/* Document icon */}
+        {item.file_url && (
+          <Ionicons
+            name="document-text-outline"
+            size={20}
+            color={colors.primary}
+          />
+        )}
       </View>
 
+      {/* BODY */}
       <ThemedText
         type="defaultSemiBold"
         style={{
@@ -121,6 +96,66 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
       <ThemedText style={{ color: colors.body }}>
         Added on {moment(item.created_at).format("MMMM D, YYYY")}
       </ThemedText>
+
+      {/* ACTIONS BELOW */}
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 12,
+          marginTop: 12,
+        }}
+      >
+        {/* EDIT */}
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: "/edit-expense",
+              params: { item: JSON.stringify(item) },
+            })
+          }
+          style={{
+            paddingVertical: 6,
+            paddingHorizontal: 14,
+            borderRadius: 6,
+            borderWidth: 1,
+            borderColor: colors.primary,
+          }}
+        >
+          <ThemedText
+            style={{
+              color: colors.primary,
+              fontSize: 13,
+            }}
+          >
+            Edit
+          </ThemedText>
+        </Pressable>
+
+        {/* DELETE */}
+        {isDeleting ? (
+          <ActivityIndicator size="small" color={colors.body} />
+        ) : (
+          <Pressable
+            onPress={handleDeleteExpense}
+            style={{
+              paddingVertical: 6,
+              paddingHorizontal: 14,
+              borderRadius: 6,
+              borderWidth: 1,
+              borderColor: colors.secondary,
+            }}
+          >
+            <ThemedText
+              style={{
+                color: colors.secondary,
+                fontSize: 13,
+              }}
+            >
+              Delete
+            </ThemedText>
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 };
@@ -128,6 +163,7 @@ const ExpenseCard = ({ item }: { item: ListType }) => {
 export default function Index() {
   const { colors } = useTheme();
   const [expenses, setExpenses] = useState<ListType[]>([]);
+
   const { data, isLoading } = useGetExpenses();
 
   useEffect(() => {
@@ -137,7 +173,26 @@ export default function Index() {
 
   return (
     <ScreenWrapper>
-      <ScreenHeader title="Saved Expenses" />
+      <ScreenHeader
+        title="Saved Expenses"
+        children={
+          <Pressable
+            onPress={() => router.push("/add-expense")}
+            style={styles.addNewBtn}
+          >
+            <AntDesign name="plus" size={16} color="black" />
+            <ThemedText
+              type="defaultSemiBold"
+              style={{
+                fontSize: fonts.text.xs,
+                marginLeft: globalStyles.margin.xs - 4,
+              }}
+            >
+              Add new
+            </ThemedText>
+          </Pressable>
+        }
+      />
       {isLoading ? (
         <View
           style={{
@@ -157,7 +212,13 @@ export default function Index() {
       ) : (
         <FlatList
           data={expenses}
-          renderItem={({ item }) => <ExpenseCard item={item} />}
+          renderItem={({ item }) => (
+            <ExpenseCard
+              item={item}
+              // openMenuId={openMenuId}
+              // setOpenMenuId={setOpenMenuId}
+            />
+          )}
           ListEmptyComponent={() => (
             <View style={styles.emptyRecordWrapper}>
               <ThemedText
@@ -195,6 +256,7 @@ export default function Index() {
           contentContainerStyle={{
             marginHorizontal: globalStyles.wrapper,
             paddingTop: globalStyles.padding.lg,
+            paddingBottom: globalStyles.padding.xxl,
           }}
         />
       )}
@@ -261,6 +323,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F4F6F7",
   },
   expenseCard: {
+    position: "relative",
     borderRadius: 12,
     // --- Shadow (iOS) ---
     shadowColor: "#000",
@@ -272,5 +335,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#F4F6F7",
     paddingHorizontal: globalStyles.margin.md + 2,
     paddingVertical: globalStyles.padding.sm,
+  },
+  addNewBtn: {
+    borderWidth: 1,
+    padding: 6,
+    borderRadius: 6,
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

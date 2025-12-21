@@ -101,7 +101,7 @@ export default function Index() {
 
             <View style={styles.cardRow}>
               <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
-                Subtotal:
+                Total Taxable income:
               </ThemedText>
               <ThemedText>{numberFormat(incomeSubtotal)}</ThemedText>
             </View>
@@ -167,7 +167,7 @@ export default function Index() {
             </View>
             <View style={styles.cardRow}>
               <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
-                Subtotal:
+                Total Deductions:
               </ThemedText>
               <ThemedText>{numberFormat(deductionsSubtotal)}</ThemedText>
             </View>
