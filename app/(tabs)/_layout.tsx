@@ -37,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tax-center"
         options={{
-          title: "Tex Center",
+          title: "Tax Center",
           tabBarIcon: ({ color, focused }) => (
             <Image
               source={require("./../../assets/icons/bottom-tabs/tex-center.png")}
