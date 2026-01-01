@@ -79,6 +79,7 @@ export const Tab3 = ({ goToNext }: TabProps) => {
       // handle error
       return;
     }
+
     await storeData("forecast_summary", response.data);
     goToNext?.();
   });

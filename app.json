@@ -10,7 +10,12 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.taxfix"
+      "bundleIdentifier": "com.taxfix",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,11 +37,11 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash.png",
+          "image": "./assets/images/splash-icon.png",
           "resizeMode": "cover",
-          "backgroundColor": "#145050",
+          "backgroundColor": "#1E6262",
           "dark": {
-            "backgroundColor": "#145050"
+            "backgroundColor": "#1E6262"
           }
         }
       ],

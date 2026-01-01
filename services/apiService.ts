@@ -2,20 +2,30 @@ import { defaultError } from "@/constants";
 import { getData } from "@/helpers";
 import axios from "axios";
 // @ts-ignore
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 
 // doc: http://51.20.117.202:8000/docs
+
 const service = axios.create({
-  baseURL: "http://51.20.117.202:8000/api",
+  baseURL: "https://api.taxfixng.com/api",
+  // timeout: 15000, // 15 seconds
+
+  headers: {
+    Accept: "*/*",
+  },
 });
 
 // Add a request interceptor
 service.interceptors.request.use(
   async function (config) {
     const token = await getData("token");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    if (Platform.OS === "ios") {
+      config.withCredentials = false;
+    }
 
-    config.headers["Content-Type"] = "multipart/form-data";
-    // Detect FormData and change headers
     if (config.data instanceof FormData) {
       config.headers["Content-Type"] = "multipart/form-data";
     } else if (config.url?.includes("/login")) {
@@ -24,13 +34,11 @@ service.interceptors.request.use(
       config.headers["Content-Type"] = "application/json";
     }
 
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
-
     return config;
   },
   function (error) {
+    console.log(error, "Error");
+
     if (error.response) {
       return Promise.reject(error.response);
     } else if (error.request) {
@@ -91,6 +99,8 @@ export const patch = async (url: any, payload: any) => {
       return resolvedData;
     }
   } catch (error: any) {
+    console.log(error);
+
     if (error?.status === 0) {
       Alert.alert("Warning", defaultError);
     }

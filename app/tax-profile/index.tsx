@@ -83,6 +83,8 @@ export default function Index() {
 
   const { isPending: isSubmitting, mutate: updateProfile } = useUpdateProfile(
     (response) => {
+      console.log(response);
+
       if (response.status >= 400) {
         showToast({
           label: "Error",
@@ -120,7 +122,7 @@ export default function Index() {
 
     const payload = {
       ...rest,
-      name: `${first_name} ${last_name}`,
+      Name: `${first_name} ${last_name}`,
       employment_income: Number(employment_income) || 0,
       house_rent: Number(house_rent) || 0,
       pension_contribution: Number(pension_contribution) || 0,
@@ -132,11 +134,10 @@ export default function Index() {
       updateProfile({
         payload,
       });
-      return;
-    }
-    mutate({
-      payload,
-    });
+    } else
+      mutate({
+        payload,
+      });
   };
 
   return (
