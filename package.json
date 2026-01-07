@@ -15,7 +15,8 @@
     "build-run:ios": "eas build:run -p ios",
     "build:debug": "cd android && ./gradlew assembleDebug && cd ..",
     "build:release": "cd android && ./gradlew assembleRelease && cd ..",
-    "bundle:release": "cd android && ./gradlew bundleRelease && cd .."
+    "bundle:release": "cd android && ./gradlew bundleRelease && cd ..",
+    "remove:session": "rm -rf ~/.app-store/auth/coolheaded79@gmail.com"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

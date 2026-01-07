@@ -30,6 +30,7 @@ export default function Account() {
       setIsProfile(false);
     } else {
       setIsProfile(true);
+      console.log(data);
     }
   }, [data]);
 

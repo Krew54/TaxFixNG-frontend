@@ -174,7 +174,7 @@ export default function Index() {
   return (
     <ScreenWrapper>
       <ScreenHeader
-        title="Saved Expenses"
+        title="Saved Records"
         children={
           <Pressable
             onPress={() => router.push("/add-expense")}

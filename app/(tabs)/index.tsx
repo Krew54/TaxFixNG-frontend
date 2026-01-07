@@ -17,7 +17,7 @@ const QUICK_ACTION = [
     screen: "/forecast",
   },
   {
-    label: "Log Expenses",
+    label: "Add Tax Record",
     icon: require("../../assets/icons/document.png"),
     screen: "/expenses",
   },

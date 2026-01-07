@@ -144,8 +144,17 @@ export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
             {numberFormat(forecastSummary?.gross_tax_liability || 0)}
           </ThemedText>
         </View>
-        <View style={styles.cardRow}>
-          <ThemedText style={{ flex: 1 }}>Total Deductions:</ThemedText>
+        <View
+          style={[
+            styles.cardRow,
+            {
+              borderBottomWidth: 1,
+            },
+          ]}
+        >
+          <ThemedText style={{ flex: 1, marginLeft: globalStyles.margin.sm }}>
+            Total Deductible:
+          </ThemedText>
           <ThemedText>
             {numberFormat(forecastSummary?.total_deductions || 0)}
           </ThemedText>
@@ -212,7 +221,14 @@ export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
           </ThemedText>
         </View>
 
-        <View style={styles.cardRow}>
+        <View
+          style={[
+            styles.cardRow,
+            {
+              borderTopWidth: 1,
+            },
+          ]}
+        >
           <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
             Total Taxable income:
           </ThemedText>
@@ -274,7 +290,14 @@ export const Tab4 = ({ goToPrev, setEstimatedTax }: TabProps) => {
             {numberFormat(forecastPayload?.voluntary_pension_contribution || 0)}
           </ThemedText>
         </View>
-        <View style={styles.cardRow}>
+        <View
+          style={[
+            styles.cardRow,
+            {
+              borderTopWidth: 1,
+            },
+          ]}
+        >
           <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
             Total Deductions:
           </ThemedText>

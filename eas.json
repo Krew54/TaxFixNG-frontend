@@ -18,7 +18,13 @@
     },
     "production": {
       "autoIncrement": true,
-      "channel": "production"
+      "channel": "production",
+      "ios": {
+        "autoIncrement": false
+      }
+      // "ios": {
+      //   "teamId": "H28ZFF3FLN"
+      // }
     },
     "development-simulator": {
       "developmentClient": true,
@@ -31,6 +37,12 @@
   },
 
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "azeezolayinkaa@gmail.com",
+        "ascAppId": "6757308901",
+        "appleTeamId": "H28ZFF3FLN"
+      }
+    }
   }
 }

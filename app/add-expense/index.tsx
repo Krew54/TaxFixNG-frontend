@@ -156,11 +156,11 @@ export default function Index() {
 
   return (
     <ScreenWrapper>
-      <ScreenHeader title="Expenses" />
+      <ScreenHeader title="Add Tax Record" />
       <ScrollView>
         <ThemedView style={styles.mainWrapper}>
           <ThemedText style={{ marginBottom: globalStyles.margin.lg }}>
-            Save tax-relevant expenses and supporting documents for the 2026 tax
+            Save tax-relevant records and supporting documents for the 2026 tax
             year in one secure place.
           </ThemedText>
 
@@ -168,21 +168,21 @@ export default function Index() {
           <Input
             control={control}
             inputName="category"
-            label="Expense Type"
-            placeholder="Select expense type"
+            label="Record Type"
+            placeholder="Select Record type"
             showLabel
             type="select"
-            rules={{ required: "Expense type is required" }}
+            rules={{ required: "Record type is required" }}
             options={EXPENSE_TYPES}
           />
 
           {/* Expense Name */}
           <Input
             control={control}
-            label="Expense Name"
+            label="Record Name"
             inputName="document_name"
-            placeholder="Expense name"
-            rules={{ required: "Expense name is required" }}
+            placeholder="Record name"
+            rules={{ required: "Record name is required" }}
             showLabel
           />
 
