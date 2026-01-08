@@ -14,6 +14,8 @@ export default function Index() {
     ? JSON.parse(decodeURIComponent(profile as string))
     : null;
 
+  console.log(parsedProfile);
+
   const incomeSubtotal =
     Number(parsedProfile?.employment_income || 0) +
     Number(parsedProfile?.business_income || 0) +
@@ -60,13 +62,24 @@ export default function Index() {
               </ThemedText>
             </View>
             <View style={styles.cardRow}>
-              <ThemedText style={{ flex: 1 }}>Total Deductions:</ThemedText>
+              <ThemedText
+                style={{ flex: 1, marginLeft: globalStyles.margin.sm }}
+              >
+                Total Deductible:
+              </ThemedText>
               <ThemedText>
                 {numberFormat(parsedProfile?.total_deductions || 0)}
               </ThemedText>
             </View>
 
-            <View style={styles.cardRow}>
+            <View
+              style={[
+                styles.cardRow,
+                {
+                  borderTopWidth: 1,
+                },
+              ]}
+            >
               <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
                 Estimated Tax Due:
               </ThemedText>
@@ -99,7 +112,14 @@ export default function Index() {
               </ThemedText>
             </View>
 
-            <View style={styles.cardRow}>
+            <View
+              style={[
+                styles.cardRow,
+                {
+                  borderTopWidth: 1,
+                },
+              ]}
+            >
               <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
                 Total Taxable income:
               </ThemedText>
@@ -165,7 +185,14 @@ export default function Index() {
                 )}
               </ThemedText>
             </View>
-            <View style={styles.cardRow}>
+            <View
+              style={[
+                styles.cardRow,
+                {
+                  borderTopWidth: 1,
+                },
+              ]}
+            >
               <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
                 Total Deductions:
               </ThemedText>
