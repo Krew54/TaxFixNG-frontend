@@ -2,6 +2,7 @@ import { defaultError } from "@/constants";
 import { getData } from "@/helpers";
 import axios from "axios";
 // @ts-ignore
+import NetInfo from "@react-native-community/netinfo";
 import { Alert, Platform } from "react-native";
 
 // doc: http://51.20.117.202:8000/docs
@@ -73,7 +74,18 @@ service.interceptors.response.use(
   }
 );
 
+const checkForConnection = async () => {
+  const netState = await NetInfo.fetch();
+  if (!netState.isConnected) {
+    Alert.alert("No Internet", "Please check your internet connection.");
+    return false;
+  }
+  return true;
+};
+
 export const post = async (url: any, payload: any, navigation?: any) => {
+  const hasInternet = await checkForConnection();
+  if (!hasInternet) return;
   try {
     const data = await service.post(url, payload);
     const resolvedData = await Promise.resolve(data);
@@ -92,6 +104,8 @@ export const post = async (url: any, payload: any, navigation?: any) => {
 };
 
 export const patch = async (url: any, payload: any) => {
+  const hasInternet = await checkForConnection();
+  if (!hasInternet) return;
   try {
     const data = await service.patch(url, payload);
     const resolvedData = await Promise.resolve(data);
@@ -109,6 +123,8 @@ export const patch = async (url: any, payload: any) => {
 };
 
 export const put = async (url: any, payload: any) => {
+  const hasInternet = await checkForConnection();
+  if (!hasInternet) return;
   try {
     const data = await service.put(url, payload);
     const resolvedData = await Promise.resolve(data);
@@ -124,6 +140,8 @@ export const put = async (url: any, payload: any) => {
 };
 
 export const Delete = async (url: any, payload?: any) => {
+  const hasInternet = await checkForConnection();
+  if (!hasInternet) return;
   try {
     const data = await service.delete(url);
     const resolvedData = await Promise.resolve(data);
@@ -140,6 +158,8 @@ export const Delete = async (url: any, payload?: any) => {
 };
 
 export const get = async (url: any, navigation?: any) => {
+  const hasInternet = await checkForConnection();
+  if (!hasInternet) return;
   try {
     const { data } = await service.get(url);
     const resolvedData = await Promise.resolve(data);
