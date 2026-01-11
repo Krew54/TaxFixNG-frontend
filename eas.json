@@ -20,7 +20,7 @@
       "autoIncrement": true,
       "channel": "production",
       "ios": {
-        "autoIncrement": false
+        "autoIncrement": true
       }
       // "ios": {
       //   "teamId": "H28ZFF3FLN"
