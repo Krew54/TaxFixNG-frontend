@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -11,7 +12,7 @@ import { Button, ScreenHeader, ScreenWrapper } from "@/components/common";
 import { ThemedText } from "@/components/themed-text";
 import { Skeleton } from "@/components/ui/skeleton";
 import { deleteData, getData } from "@/helpers";
-import { useGetProfile } from "@/hooks/profile";
+import { useDeleteAccount, useGetProfile } from "@/hooks/profile";
 import { useTheme } from "@/hooks/use-theme-color";
 import { formatWithCommas, globalStyles } from "@/utils";
 import { router } from "expo-router";
@@ -30,7 +31,6 @@ export default function Account() {
       setIsProfile(false);
     } else {
       setIsProfile(true);
-      console.log(data);
     }
   }, [data]);
 
@@ -85,6 +85,11 @@ export default function Account() {
                 caption: "Sign out of the App.",
                 icon: require("../../assets/icons/logout.png"),
               },
+              {
+                label: "Account Deletion",
+                caption: "Delete my account on the App.",
+                icon: require("../../assets/icons/trash.png"),
+              },
             ]
           : [
               {
@@ -99,6 +104,15 @@ export default function Account() {
 
     load();
   }, []);
+
+  const { isPending, mutate } = useDeleteAccount(async (response) => {
+    if (response.status >= 400) {
+      console.log("Error deleting account");
+    } else {
+      await deleteData("token");
+      router.replace("/login");
+    }
+  });
 
   const handlePress = (label: string, screen: any) => {
     if (label === "Log out") {
@@ -116,7 +130,23 @@ export default function Account() {
             },
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
+      );
+    } else if (label === "Account Deletion") {
+      Alert.alert(
+        "Confirm Deletion",
+        "Are you sure you want to delete your account?",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete Account",
+            style: "destructive",
+            onPress: async () => {
+              mutate();
+            },
+          },
+        ],
+        { cancelable: true },
       );
     } else {
       router.push(screen);
@@ -126,6 +156,32 @@ export default function Account() {
   return (
     <ScreenWrapper>
       <ScreenHeader title="Account" hideBackBtn />
+      {isPending && (
+        <View
+          style={{
+            position: "absolute",
+            right: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            justifyContent: "center",
+            zIndex: 10,
+          }}
+        >
+          <ActivityIndicator size="large" color={colors.white} />
+          <ThemedText
+            style={{
+              textAlign: "center",
+              color: colors.white,
+              marginTop: 12,
+            }}
+            type="defaultSemiBold"
+          >
+            Deleting account...
+          </ThemedText>
+        </View>
+      )}
       <ScrollView>
         <View style={styles.mainWrapper}>
           <ThemedText type="subtitle">Tax Profile</ThemedText>

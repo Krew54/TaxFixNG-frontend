@@ -104,8 +104,6 @@ export default function Index() {
 
   const { isPending, mutate } = useCreateExpense((response) => {
     if (response.status >= 400) {
-      console.log(response.data);
-
       // showToast({
       //   label: "Error",
       //   message: response.data.detail,
