@@ -11,6 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
+        "NSCameraUsageDescription": "TaxfixNG use the camera to scan tax documents and receipts so users can capture and upload them to help them with tax forecasting",
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },

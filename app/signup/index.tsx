@@ -50,6 +50,8 @@ export default function Index() {
 
   const { isPending, mutate } = useSignup((res) => {
     if (res.status >= 400) {
+      console.log(res.data);
+
       let message = "";
 
       if (Array.isArray(res.data.detail)) {
@@ -60,7 +62,7 @@ export default function Index() {
 
         message = uniqueMsgs.join(", ");
       } else {
-        message = res.data.detail;
+        message = res.data.detail || res.data;
       }
       showToast({
         label: "Error",
@@ -111,6 +113,7 @@ export default function Index() {
           inputName="email"
           placeholder="Enter Email Address"
           keyboardType="email-address"
+          autoCapitalize="none"
         />
         <Input
           control={control}
