@@ -1,21 +1,28 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { ArticleCard } from "@/components/article-card";
-import { Categories } from "@/components/categories";
-import { Input, ScreenHeader, ScreenWrapper } from "@/components/common";
-import { ThemedText } from "@/components/themed-text";
+import { ScreenHeader, ScreenWrapper } from "@/components/common";
+import { useGetWeeklyPost } from "@/hooks/blog";
 import { useTheme } from "@/hooks/use-theme-color";
 import { globalStyles } from "@/utils";
-import { useForm } from "react-hook-form";
 
 export default function Blog() {
   const { colors, isDark } = useTheme();
-  const { control } = useForm();
+
+  const { data, isSuccess, isLoading, isFetching, refetch } =
+    useGetWeeklyPost();
+
   return (
     <ScreenWrapper>
       <ScreenHeader title="Learn" hideBackBtn />
       <View style={styles.mainWrapper}>
-        <ThemedText
+        {/* <ThemedText
           type="defaultSemiBold"
           style={{
             color: isDark ? colors.text : colors.primary,
@@ -29,27 +36,24 @@ export default function Blog() {
           placeholder="Search..."
           leftIcon={require("../../assets/icons/search.png")}
         />
-        <Categories />
-        <ScrollView>
-          <ThemedText
-            type="defaultSemiBold"
-            style={{
-              marginVertical: globalStyles.margin.md,
-            }}
-          >
-            Featured Articles
-          </ThemedText>
-          <ArticleCard />
-          <ThemedText
-            type="defaultSemiBold"
-            style={{
-              marginVertical: globalStyles.margin.sm,
-            }}
-          >
-            Latest Articles
-          </ThemedText>
-          <ArticleCard />
-          <ArticleCard />
+        <Categories /> */}
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+          }
+          contentContainerStyle={{ paddingVertical: 20 }}
+        >
+          {isLoading && (
+            <ActivityIndicator size={"large"} color={colors.body} />
+          )}
+
+          {isSuccess && data && (
+            <ArticleCard
+              title={data.topic}
+              content={data.content}
+              date={data.generated_at}
+            />
+          )}
         </ScrollView>
       </View>
     </ScreenWrapper>
@@ -60,6 +64,5 @@ const styles = StyleSheet.create({
   mainWrapper: {
     paddingHorizontal: globalStyles.wrapper,
     flex: 1,
-    paddingTop: globalStyles.padding.md,
   },
 });

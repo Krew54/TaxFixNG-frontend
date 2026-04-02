@@ -5,7 +5,7 @@ import axios from "axios";
 import NetInfo from "@react-native-community/netinfo";
 import { Alert, Platform } from "react-native";
 
-// doc: http://51.20.117.202:8000/docs
+// doc: https://api.taxfixng.com/docs
 
 const service = axios.create({
   baseURL: "https://api.taxfixng.com/api",
@@ -48,7 +48,7 @@ service.interceptors.request.use(
       return Promise.reject(error.message);
     }
     // return Promise.reject(error);
-  }
+  },
 );
 
 // Add a response interceptor
@@ -71,7 +71,7 @@ service.interceptors.response.use(
     } else {
       return Promise.reject(error.message);
     }
-  }
+  },
 );
 
 const checkForConnection = async () => {
