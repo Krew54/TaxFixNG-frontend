@@ -2,12 +2,12 @@
   "expo": {
     "name": "TaxFix NG",
     "slug": "tax-fix",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "taxfix",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    // "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
