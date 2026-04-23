@@ -29,14 +29,9 @@ export default function Blog() {
           }}
         >
           Stay informed and take care of your tax journey.
-        </ThemedText>
-        <Input
-          inputName="search"
-          control={control}
-          placeholder="Search..."
-          leftIcon={require("../../assets/icons/search.png")}
-        />
-        <Categories /> */}
+        </ThemedText> */}
+
+        {/* <Categories /> */}
         <ScrollView
           refreshControl={
             <RefreshControl refreshing={isFetching} onRefresh={refetch} />
